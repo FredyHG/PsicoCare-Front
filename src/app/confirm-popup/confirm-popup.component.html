@@ -1,0 +1,10 @@
+<div *ngIf="isVisible" class="popup">
+  <div class="popup-inner">
+    <i class="ph ph-warning-circle" style="font-size: 50px"></i>
+    <p>{{message}}</p>
+    <div class="actions">
+      <button (click)="onDecline()" class="btn-no">No</button>
+      <button (click)="onConfirm()" class="btn-yes">Yes</button>
+    </div>
+  </div>
+</div>

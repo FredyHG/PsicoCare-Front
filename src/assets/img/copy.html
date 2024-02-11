@@ -1,0 +1,28 @@
+<div class="table-content">
+  <table>
+    <thead class="table-header">
+    <tr>
+      <th>NAME</th>
+      <th>LAST N.</th>
+      <th>EMAIL</th>
+      <th>CPF</th>
+      <th class="th-actions">ACTIONS</th>
+    </tr>
+    </thead>
+    <tbody class="table-body">
+    <tr *ngFor="let item of paginatedResponse.content">
+      <td class="table-row">{{ item.name }}</td>
+      <td class="table-row">{{ item.lastName }}</td>
+      <td class="table-row" style="word-wrap: break-word;">{{ item.email }}</td>
+      <td class="td-cpf table-row">{{ item.cpf }}</td>
+      <td class="td-actions">
+                  <span>
+                    <i class="ph ph-eye"></i>
+                    <i class="ph ph-pencil-simple"></i>
+                    <i class="ph ph-minus-circle" (click)="showPopup(); idToExclude = item.id"></i>
+                  </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
