@@ -1,6 +1,16 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "src/.*", "dest": "/index.html" }
-  ]
+  "version": 2,
+  "public": true,
+  "name": "psicocare-front",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "dist/psicocare-front/**"
+    }
+  }
 }
