@@ -44,9 +44,6 @@
   }
 }
 
-
-
-
 .inputs-area {
   margin-top: 6vh;
   display: flex;
@@ -107,9 +104,10 @@
 
 
   input {
-    background-color: #e1e1e1;
+    cursor: text;
+    background-color: #e8e8e8;
     border: #3c4868 solid 1px;
-    height: 4vh;
+    height: 38px;
     border-radius: 5px;
     padding-left: 5px;
     transition: border-color 0.3s ease;
@@ -128,8 +126,6 @@
 .edit-field{
   width: auto;
 }
-
-
 
 .filter-actions {
   display: flex;
@@ -255,7 +251,7 @@ th {
 
 
 
-.details {
+.details, .create-card{
   position: fixed;
   top: 0;
   left: 0;
@@ -266,23 +262,22 @@ th {
   justify-content: center;
   align-items: center;
 
-  .details-inner {
+  .details-inner, .create-inner {
     font-family: "Roboto", sans-serif;
     color: #39425e;
-    background-color: #ececec;
+    background-color: #f5f2f2;
     padding: 20px;
     width: 25vw;
-    height: 45vh;
+    height: 48vh;
     min-width: 250px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
+
     @media screen and (max-width: 600px){
       width: 60vw;
-      min-height: 380px;
-      height: 48vh;
     }
   }
 }
@@ -338,11 +333,27 @@ th {
   }
 }
 
-.edit-input-container{
+.edit-input-container, .create-input-container{
   display: flex;
   width: 100%;
   flex-direction: column;
   gap: 10px;
+}
+
+.edit-input-container, .body-container{
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c4c4c4;
+  }
 }
 
 .edit-actions{
@@ -351,5 +362,15 @@ th {
   justify-content: flex-end;
 }
 
+
+.create-input-container{
+  .name-and-lastname{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  gap: 10px;
+}
 
 

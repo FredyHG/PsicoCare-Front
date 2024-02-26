@@ -1,0 +1,24 @@
+<div class="login-page">
+  <div class="login-page-inner">
+      <form class="login-inputs" [formGroup]="loginForm" (submit)="submit()">
+        <div [ngClass]="checkField('email') ? 'input-field error' : 'input-field'">
+          <span>Email</span>
+          <input type="email"
+                 required
+                 formControlName="email"
+                 [ngStyle]="{'border': checkField('email') ? '#ff0045 solid 1px' : '#f10000 solid 1.5px;'}">
+        </div>
+        <div [ngClass]="checkField('password') ? 'input-field error' : 'input-field'">
+          <span>Password</span>
+          <input type="password"
+                 required
+                 formControlName="password"
+                 [ngStyle]="{'border': checkField('password') ? '#ff0045 solid 1px' : '#f10000 solid 1.5px;'}">
+        </div>
+        <div class="login-actions" >
+          <button type="submit" [disabled]="!loginForm.valid">Login</button>
+        </div>
+      </form>
+
+  </div>
+</div>

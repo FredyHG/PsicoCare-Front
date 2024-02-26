@@ -38,7 +38,7 @@
           <span><i class="ph ph-user-list"></i>PATIENTS</span>
         </div>
         <div class="create-delete">
-          <button class="btn-create"><i class="ph ph-plus-circle"></i>CREATE </button>
+          <button class="btn-create" (click)="showCreate()"><i class="ph ph-plus-circle"></i>CREATE </button>
         </div>
       </div>
       <div class="table-content-container">
@@ -54,7 +54,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of paginatedResponse.content">
+            <tr *ngFor="let item of paginatedResponse?.content">
               <td class="table-row">{{ item.name }}</td>
               <td class="table-row">{{ item.lastName }}</td>
               <td class="table-row" style="word-wrap: break-word;">{{ item.email }}</td>
@@ -78,7 +78,7 @@
   <div class="details-inner">
     <div class="close-container">
       <span>Details</span>
-      <i class="ph ph-x" (click)="closeDetails()"></i>
+      <i class="ph ph-x" (click)="closeCard()"></i>
     </div>
     <div class="body-container">
       <div class="detail-name-lastname">
@@ -125,36 +125,78 @@
   <div class="details-inner">
     <div class="close-container">
       <span>Edit</span>
-      <i class="ph ph-x" (click)="closeEdit()"></i>
+      <i class="ph ph-x" (click)="closeCard()"></i>
     </div>
-    <div class="edit-input-container">
+    <form class="edit-input-container" [formGroup]="editForm" (submit)="editPatient()">
       <div class="edit-field">
         <span class="detail-title">Name</span>
-        <input type="text" placeholder="{{getDetailData().name}}">
+        <input type="text" placeholder="{{getDetailData().name}}" formControlName="name">
       </div>
       <div class="edit-field">
         <span class="detail-title">Last N.</span>
-        <input type="text" placeholder="{{getDetailData().lastName}}">
+        <input type="text" placeholder="{{getDetailData().lastName}}" formControlName="lastName">
       </div>
       <div class="edit-field">
         <span class="detail-title">Email</span>
-        <input type="text" placeholder="{{getDetailData().email}}">
+        <input type="text" placeholder="{{getDetailData().email}}" formControlName="email">
       </div>
       <div class="edit-field">
         <span class="detail-title">Phone</span>
-        <input type="text" placeholder="{{getDetailData().phone}}" >
+        <input type="text" placeholder="{{getDetailData().phone}}" formControlName="phone" mask="(00)00000-0000" [dropSpecialCharacters]="false">
       </div>
 
       <div class="edit-field">
         <span class="detail-title">BirthDate</span>
-        <input type="date" [max]="minDate" [min]="maxDate">
+        <input type="date" [max]="minDate" [min]="maxDate" formControlName="birthDate">
       </div>
-    </div>
-    <div class="edit-actions">
-      <button class="btn-edit">EDIT</button>
-    </div>
-  </div>
+      <div class="edit-actions">
+        <button class="btn-edit" type="submit">EDIT</button>
+      </div>
+    </form>
 
+  </div>
+</div>
+
+<div class="create-card" *ngIf="createVisible">
+  <div class="details-inner">
+    <div class="close-container">
+      <span>Create</span>
+      <i class="ph ph-x" (click)="closeCard()"></i>
+    </div>
+    <form class="create-input-container" (submit)="createPatient()" [formGroup]="editForm">
+      <div class="name-and-lastname">
+        <div class="name-input" >
+          <span>Name</span>
+          <input type="text" formControlName="name">
+        </div>
+        <div class="last-name-input">
+          <span>Last Name</span>
+          <input type="text" formControlName="lastName">
+        </div>
+      </div>
+      <div class="edit-field">
+        <span class="detail-title">Email</span>
+        <input type="text" formControlName="email">
+      </div>
+
+      <div class="edit-field">
+        <span class="detail-title">CPF</span>
+        <input type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="false">
+      </div>
+      <div class="edit-field">
+        <span class="detail-title">Phone</span>
+        <input type="text" formControlName="phone" mask="(00)00000-0000" [dropSpecialCharacters]="false">
+      </div>
+
+      <div class="edit-field">
+        <span class="detail-title">BirthDate</span>
+        <input type="date" [max]="minDate" [min]="maxDate" formControlName="birthDate">
+      </div>
+      <div class="edit-actions">
+      <button class="btn-edit" type="submit">CREATE</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 

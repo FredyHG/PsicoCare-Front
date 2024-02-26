@@ -1,27 +1,34 @@
 <div class="principal">
-  <nav class="tab-bar">
-    <div class="logo">
-      <i class="ph-fill ph-bird"></i>
-      <span>PsicoCare</span>
-    </div>
-    <div class="tab-actions">
-      <button class="tab-button" (mouseenter)="onMouseEnter('patient')" (mouseleave)="onMouseLeave('patient')">
-        <i [ngClass]="buttonHoverState.patient ? 'ph-fill ph-users button-icon' : 'ph ph-users button-icon'"></i>
-        <span class="button-text">Patients</span>
-      </button>
-      <button class="tab-button" (mouseenter)="onMouseEnter('therapy')" (mouseleave)="onMouseLeave('therapy')">
-        <i [ngClass]="buttonHoverState.therapy ? 'ph-fill ph-brain button-icon' : 'ph ph-brain button-icon'"></i>
-        <span class="button-text">Therapies</span>
-      </button>
-      <button class="tab-button" (mouseenter)="onMouseEnter('schedule')" (mouseleave)="onMouseLeave('schedule')">
-        <i [ngClass]="buttonHoverState.schedule ? 'bx button-icon ph-fill ph-calendar' : 'ph ph-calendar button-icon'"></i>
-        <span class="button-text">Schedules</span>
-      </button>
+  <nav class="tab-bar" *ngIf="validRoute()">
+    <div class="top-actions">
+      <div class="logo">
+        <i class="ph-fill ph-bird"></i>
+        <span>PsicoCare</span>
+      </div>
+      <div class="tab-actions">
+        <button class="tab-button" (mouseenter)="onMouseEnter('patient')" (mouseleave)="onMouseLeave('patient')">
+          <i [ngClass]="buttonHoverState.patient ? 'ph-fill ph-users button-icon' : 'ph ph-users button-icon'"></i>
+          <span class="button-text">Patients</span>
+        </button>
+        <button class="tab-button" (mouseenter)="onMouseEnter('therapy')" (mouseleave)="onMouseLeave('therapy')">
+          <i [ngClass]="buttonHoverState.therapy ? 'ph-fill ph-brain button-icon' : 'ph ph-brain button-icon'"></i>
+          <span class="button-text">Therapies</span>
+        </button>
+        <button class="tab-button" (mouseenter)="onMouseEnter('schedule')" (mouseleave)="onMouseLeave('schedule')">
+          <i [ngClass]="buttonHoverState.schedule ? 'bx button-icon ph-fill ph-calendar' : 'ph ph-calendar button-icon'"></i>
+          <span class="button-text">Schedules</span>
+        </button>
 
+      </div>
     </div>
+
+    <div class="logout-area">
+      <button class="tab-button" (click)="logout()"><i class="ph ph-sign-out"></i>Logout</button>
+    </div>
+
   </nav>
   <section>
-    <patient-page></patient-page>
+    <router-outlet></router-outlet>
   </section>
 </div>
 
