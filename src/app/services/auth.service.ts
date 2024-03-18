@@ -1,14 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {UserLogin} from "../models/UserLogin";
 import {BehaviorSubject, Observable, Subscription} from "rxjs";
 import {AuthResponse} from "../models/dto/AuthResponse";
-import {Router} from "@angular/router";
-import {routes} from "../app.routes";
-
-
-const AUTH_API = 'http://18.228.189.118:8080/api/auth/';
+import {ActivatedRoute, Router} from "@angular/router";
+import {environment} from "../../../environment";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,15 +18,16 @@ const httpOptions = {
 export class AuthService {
 
   private isLoggedIn = new BehaviorSubject<boolean>(false);
-
+  isLoggedIn$ = this.isLoggedIn.asObservable();
   isUserLoggedIn: boolean = false;
-
   private authSubscription: Subscription;
-
+  private apiUrlAuth = environment.apiUrlAuth;
 
   constructor(private cookieService: CookieService,
               private httpClient: HttpClient,
-              private router: Router) {
+              private router: Router,
+              private route: ActivatedRoute,
+  ) {
 
     this.authSubscription = this.isLoggedIn$.subscribe(
       (isLoggedIn: boolean) => {
@@ -52,48 +50,43 @@ export class AuthService {
   }
 
   submitLoginForm(formData: UserLogin): Observable<AuthResponse> {
-
-    return this.httpClient.post<AuthResponse>(AUTH_API + 'authenticate', formData, httpOptions)
+    return this.httpClient.post<AuthResponse>(this.apiUrlAuth + '/authenticate', formData, httpOptions)
   }
 
   refreshToken() {
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.cookieService.get('refreshToken') })
-    };
+    }
 
     if(this.cookieService.get('refreshToken') == null){
       this.isLoggedIn.next(false);
-      this.router.navigate(['/login'])
+      this.redirectToLogin();
     }
 
-    return this.httpClient.post<AuthResponse>(AUTH_API + 'refresh-token', { }, httpOptions);
+    return this.httpClient.post<AuthResponse>(this.apiUrlAuth + '/refresh-token', { }, httpOptions);
   }
 
   login(refreshToken: string, accessToken: string): void{
     this.isLoggedIn.next(true);
-    this.cookieService.set('accessToken', accessToken, 86400000)
-    this.cookieService.set('refreshToken', refreshToken, 604800000)
+    this.cookieService.set('accessToken', accessToken, 86400000);
+    this.cookieService.set('refreshToken', refreshToken, 604800000);
   }
 
   logout(): Observable<any>{
     this.isLoggedIn.next(false);
     this.redirectToLogin();
-    return this.httpClient.post(AUTH_API + 'logout', { }, httpOptions);
+
+    return this.httpClient.post(this.apiUrlAuth + 'logout', { }, httpOptions);
   }
-
-
-  isLoggedIn$ = this.isLoggedIn.asObservable();
-
-
 
   redirectToLogin() {
     this.cookieService.delete('accessToken');
     this.cookieService.delete('refreshToken');
 
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'], {relativeTo: this.route});
   }
 
   checkLogin() {
-    return this.httpClient.post<any>(AUTH_API + 'check-login', { }, httpOptions);
+    return this.httpClient.post<any>(this.apiUrlAuth + '/check-login', { }, httpOptions);
   }
 }

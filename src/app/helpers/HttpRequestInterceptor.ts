@@ -35,9 +35,6 @@ export class HttpRequestInterceptor implements HttpInterceptor{
           return this.handle409Error(req, next);
         }
 
-
-        console.log('chegou aqui')
-
         return throwError(() => error);
       })
     );

@@ -6,11 +6,11 @@
         <span>PsicoCare</span>
       </div>
       <div class="tab-actions">
-        <button class="tab-button" (mouseenter)="onMouseEnter('patient')" (mouseleave)="onMouseLeave('patient')">
+        <button class="tab-button" (mouseenter)="onMouseEnter('patient')" (mouseleave)="onMouseLeave('patient')" (click)="navigateTo('/patients')">
           <i [ngClass]="buttonHoverState.patient ? 'ph-fill ph-users button-icon' : 'ph ph-users button-icon'"></i>
           <span class="button-text">Patients</span>
         </button>
-        <button class="tab-button" (mouseenter)="onMouseEnter('therapy')" (mouseleave)="onMouseLeave('therapy')">
+        <button class="tab-button" (mouseenter)="onMouseEnter('therapy')" (mouseleave)="onMouseLeave('therapy')" (click)="navigateTo('/therapies')">
           <i [ngClass]="buttonHoverState.therapy ? 'ph-fill ph-brain button-icon' : 'ph ph-brain button-icon'"></i>
           <span class="button-text">Therapies</span>
         </button>

@@ -1,7 +1,5 @@
-import {Patient} from "./Patient";
-
 export type PaginatedResponse<T> = {
-  content: Patient[];
+  content: T[];
   totalElements: number;
   size: number;
   number: number;

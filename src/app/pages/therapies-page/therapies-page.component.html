@@ -1,3 +1,121 @@
-<div>
-  
+<div class="therapies-page">
+  <div class="table-area">
+
+    <div class="inputs-area">
+      <div class="filter">
+        <span class="filter-text"><i class="ph ph-faders-horizontal"></i>FILTER</span>
+      </div>
+      <div class="name-and-lastname">
+        <div class="name-input" >
+          <span>Patient Name</span>
+          <input #inputPatientName type="text" placeholder="Write here">
+        </div>
+        <div class="last-name-input">
+          <span>Patient CPF</span>
+          <input #inputPatientCPF type="text" placeholder="Write here">
+        </div>
+      </div>
+      <div class="email-and-cpf">
+        <div class="input-cpf">
+          <span>Psychologist Name</span>
+          <input #inputPsychologistName type="text" placeholder="Write here">
+        </div>
+        <div class="email-input">
+          <span>Psychologist CRP</span>
+          <input #inputPsychologistCRP type="email" placeholder="Write here">
+        </div>
+      </div>
+      <div class="filter-actions">
+        <div class="filter-clean">
+          <button class="btn-filter" (click)="filterList(inputPatientName, inputPatientCPF, inputPsychologistName, inputPsychologistCRP)"><i class="ph ph-funnel"></i>FILTER</button>
+          <button class="btn-clean" (click)="cleanInput(inputPatientName, inputPatientCPF, inputPsychologistName, inputPsychologistCRP)"><i class="ph ph-broom"></i>CLEAN</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-area-container">
+      <div class="table-header-container">
+        <div class="header-text">
+          <span><i class="ph ph-user-list"></i>THERAPIES</span>
+        </div>
+        <div class="header-actions">
+          <div>
+            <select [(ngModel)]="selectedStatus" (change)="getTherapiesByStatus()" class="select-status">
+              <option value="ALL">All</option>
+              <option value='WAIT_DATE'>Wait Date</option>
+              <option value='WAIT_CONFIRMATION'>Wait Confirmation</option>
+              <option value='FINISH'>Finish</option>
+              <option value='CANCELED'>Canceled</option>
+            </select>
+          </div>
+          <div class="create-delete">
+            <button class="btn-create" (click)="showCreate()"><i class="ph ph-plus-circle"></i>CREATE </button>
+          </div>
+        </div>
+      </div>
+      <div class="table-content-container">
+        <div class="table-content">
+          <table>
+            <thead>
+            <tr>
+              <th>Psychologist</th>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th class="th-actions">ACTIONS</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of paginatedResponse?.content">
+              <td class="table-row" >{{ item.psychologist.name}}</td>
+              <td class="table-row" style="word-wrap: break-word;">{{ item.patient.name }}</td>
+              <td class="table-row" style="word-wrap: break-word;">{{ item.dateTime | date:'short' }}</td>
+              <td class="table-row" style="word-wrap: break-word;">{{ item.status }}</td>
+              <td class="td-actions">
+                <span>
+                  <i class="ph ph-eye"></i>
+                  <i class="ph ph-pencil-simple"></i>
+                  <i class="ph ph-minus-circle"></i>
+                </span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="create-card" *ngIf="createVisible">
+  <div class="details-inner">
+    <div class="close-container">
+      <span>Create</span>
+      <i class="ph ph-x" (click)="closeCard()"></i>
+    </div>
+    <form class="create-input-container" [formGroup]="createForm" (ngSubmit)="createTherapy()">
+      <div class="edit-field">
+        <span class="detail-title">Patient</span>
+        <select formControlName="cpfPatient" class="default-select">
+          <option [ngValue]="null" disabled>Choose patient</option>
+          <option *ngFor="let pat of paginatedResponsePatient?.content" [value]="pat.cpf">{{ pat.name }}</option>
+        </select>
+      </div>
+
+      <div class="edit-field">
+        <span class="detail-title">Psychologist</span>
+        <select formControlName="crpPsychologist" class="default-select">
+          <option [ngValue]="null" disabled>Choose psychologist</option>
+          <option *ngFor="let psy of paginatedResponsePsychologist?.content" [value]="psy.crp">{{ psy.name }}</option>
+        </select>
+      </div>
+
+      <div class="edit-field">
+        <span class="detail-title">Date</span>
+        <input type="datetime-local" formControlName="dateTime" step="900" min="" max="">
+      </div>
+      <div class="edit-actions">
+        <button class="btn-edit" type="submit">CREATE</button>
+      </div>
+    </form>
+  </div>
 </div>

@@ -5,7 +5,6 @@ import {PaginatedResponse} from "../models/PaginatedResponse";
 import {Patient} from "../models/Patient";
 import {Observable} from "rxjs";
 import {PatientPutRequest} from "../models/dto/PatientPutRequest";
-import {AuthResponse} from "../models/dto/AuthResponse";
 import {ResponseMessage} from "../models/dto/ResponseMessage";
 
 
@@ -23,7 +22,7 @@ export class PatientsService {
   constructor(private httpClient: HttpClient) { }
 
   getPatients(): Observable<PaginatedResponse<Patient>>{
-    return this.httpClient.get<PaginatedResponse<Patient>>(this.apiUrl + '/patient');
+    return this.httpClient.get<PaginatedResponse<Patient>>(this.apiUrl + '/patient/all');
   }
 
   getPatientsFiltered(name: string,
@@ -53,17 +52,16 @@ export class PatientsService {
   deletePatient(cpf: string){
 
     let params = new HttpParams();
-
     params = params.set('cpf', cpf)
 
     return this.httpClient.delete<void>(this.apiUrl + '/patient/delete', { params });
   }
 
   editPatient(editForm: PatientPutRequest): Observable<ResponseMessage> {
-    return this.httpClient.put<ResponseMessage>(this.apiUrl + '/patient', editForm, httpOptions)
+    return this.httpClient.put<ResponseMessage>(this.apiUrl + '/patient/edit', editForm, httpOptions);
   }
 
   createPatient(createForm: PatientPutRequest) {
-    return this.httpClient.post<ResponseMessage>(this.apiUrl + '/patient', createForm, httpOptions)
+    return this.httpClient.post<ResponseMessage>(this.apiUrl + '/patient/create', createForm, httpOptions);
   }
 }

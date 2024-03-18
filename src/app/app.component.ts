@@ -65,6 +65,10 @@ export class AppComponent {
   logout(){
     this.authService.logout();
   }
+
+  navigateTo(routeURl: string) {
+    this.router.navigate([routeURl]);
+  }
 }
 
 type ButtonHoverState = {

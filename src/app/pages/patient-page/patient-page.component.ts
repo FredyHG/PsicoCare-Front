@@ -7,7 +7,6 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {PatientsService} from "../../services/patients.service";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {PatientPutRequest} from "../../models/dto/PatientPutRequest";
-import {Observable} from "rxjs";
 import {ResponseMessage} from "../../models/dto/ResponseMessage";
 import {NgxMaskDirective} from "ngx-mask";
 
@@ -113,7 +112,7 @@ export class PatientPageComponent {
   handleConfirmation(confirmed: boolean) {
     if (confirmed) {
       this.patientService.deletePatient(this.selectedPatient.cpf).subscribe({
-        next: () => this.getPatientsData()
+        complete: () => this.getPatientsData()
       });
     }
   }
