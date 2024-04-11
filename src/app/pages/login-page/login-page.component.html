@@ -1,24 +1,36 @@
 <div class="login-page">
   <div class="login-page-inner">
       <form class="login-inputs" [formGroup]="loginForm" (submit)="submit()">
-        <div [ngClass]="checkField('email') ? 'input-field error' : 'input-field'">
-          <span>Email</span>
+        <div class="input-field">
+          <span class="field-title"
+                [ngStyle]="{'color': loginForm.get('email')?.invalid && loginForm.get('email')?.touched ? '#ff3333' : '#3c4868'}">
+            Email
+          </span>
           <input type="email"
                  required
                  formControlName="email"
-                 [ngStyle]="{'border': checkField('email') ? '#ff0045 solid 1px' : '#f10000 solid 1.5px;'}">
+                 [ngStyle]="{'border': loginForm.get('email')?.invalid && loginForm.get('email')?.touched ? '#ff3333 solid 1px' : '#3c4868 solid 1.5px'}">
+          <div class="error-field" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            <span class="error-message">Invalid Email</span>
+          </div>
         </div>
-        <div [ngClass]="checkField('password') ? 'input-field error' : 'input-field'">
-          <span>Password</span>
+        <div class="input-field">
+          <span class="field-title"
+            [ngStyle]="{'color': loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? '#ff3333' : '#3c4868'}">Password
+          </span>
           <input type="password"
                  required
                  formControlName="password"
-                 [ngStyle]="{'border': checkField('password') ? '#ff0045 solid 1px' : '#f10000 solid 1.5px;'}">
+                 [ngStyle]="{'border': loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? '#ff3333 solid 1px' : '#3c4868 solid 1.5px'}">
+
+
+          <div class="error-field" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <span class="error-message">Invalid Password</span>
+          </div>
         </div>
         <div class="login-actions" >
           <button type="submit" [disabled]="!loginForm.valid">Login</button>
         </div>
       </form>
-
   </div>
 </div>

@@ -6,6 +6,8 @@ import {BehaviorSubject, Observable, Subscription} from "rxjs";
 import {AuthResponse} from "../models/dto/AuthResponse";
 import {ActivatedRoute, Router} from "@angular/router";
 import {environment} from "../../../environment";
+import {ResponseMessage} from "../models/dto/ResponseMessage";
+import {ChangePasswordRequest} from "../models/dto/ChangePasswordRequest";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -88,5 +90,9 @@ export class AuthService {
 
   checkLogin() {
     return this.httpClient.post<any>(this.apiUrlAuth + '/check-login', { }, httpOptions);
+  }
+
+  changePassword(formData: ChangePasswordRequest): Observable<ResponseMessage>{
+    return this.httpClient.post<ResponseMessage>(this.apiUrlAuth + '/change-password', formData, httpOptions)
   }
 }

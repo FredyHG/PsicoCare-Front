@@ -1,0 +1,126 @@
+@import "../../../styles/mixins";
+
+.profile-page {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+
+  .details-container{
+    .container-title{
+      width: 100%;
+      color: #39425d;
+    }
+    width: 80%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f5f3f3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    gap: 2vh;
+    padding: 2vh;
+    border-radius: 8px;
+
+    .field-title{
+      color: #8589a1;
+      font-size: 12px
+    }
+    .name-lastname-container, .crp-phone-container, .email-container, .password-container{
+      display: flex;
+      width: 90%;
+      gap: 10px;
+      .field{
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+        width: 50%;
+        height: auto;
+        border: solid 1px #b2b3c0;
+        border-radius: 4px;
+        background-color: #e1e1e1;
+
+        .field-content{
+          word-wrap: break-word;
+          color: #39425e;
+        }
+      }
+    }
+    .email-container, .password-container{
+      display: flex;
+      position: relative;
+      .field{
+        width: 100%;
+      }
+      .btn-change{
+        display: flex;
+        position: absolute;
+        width: 100%;
+        left: 0;
+        justify-content: flex-end;
+        padding-right: 10px;
+        padding-top: 10px;
+        span{
+          i{
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+.change-password-window{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .change-password-container{
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #f5f3f3;
+    border-radius: 8px;
+    min-width: 250px;
+
+    .change-password-header{
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .field{
+      display: flex;
+      flex-direction: column;
+      .field-title{
+        font-size: 12px;
+        color: #39425d;
+      }
+      input{
+        @include input-style;
+      }
+    }
+
+    .change-actions{
+      display: flex;
+      justify-content: flex-end;
+      .btn-change{
+        @include button-style;
+      }
+    }
+
+    .change-password-form{
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+}
+

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, TitleCasePipe} from "@angular/common";
 import {Therapy} from "../../models/Therapy";
 import {TherapiesService} from "../../services/therapies.service";
 import {NgxMaskDirective} from "ngx-mask";
@@ -11,7 +11,9 @@ import {Patient} from "../../models/Patient";
 import {PatientsService} from "../../services/patients.service";
 import {TherapyPostRequest} from "../../models/dto/TherapyPostRequest";
 import {ResponseMessage} from "../../models/dto/ResponseMessage";
-import {PatientPutRequest} from "../../models/dto/PatientPutRequest";
+import {AutoCompleteCompleteEvent, AutoCompleteModule} from "primeng/autocomplete";
+import {PaginatorModule} from "primeng/paginator";
+import {CalendarModule} from "primeng/calendar";
 
 
 @Component({
@@ -23,27 +25,37 @@ import {PatientPutRequest} from "../../models/dto/PatientPutRequest";
     NgxMaskDirective,
     ReactiveFormsModule,
     DatePipe,
-    FormsModule
+    FormsModule,
+    CalendarModule,
+    AutoCompleteModule,
+    TitleCasePipe,
+    PaginatorModule,
+    CalendarModule
   ],
   templateUrl: './therapies-page.component.html',
-  styleUrl: './therapies-page.component.scss'
+  styleUrl: './therapies-page.component.scss',
 })
-export class TherapiesPageComponent implements OnInit{
+export class TherapiesPageComponent implements OnInit {
 
-  paginatedResponse!: PaginatedResponse<Therapy>;
+  responseTherapy!: PaginatedResponse<Therapy>;
+  responsePsychologist!: PaginatedResponse<Psychologist>;
+  responsePatient!: PaginatedResponse<Patient>;
 
-  paginatedResponsePsychologist!: PaginatedResponse<Psychologist>;
+  createVisible: boolean = false;
+  detailsVisible: boolean = false;
+  editVisible: boolean = false;
 
-  paginatedResponsePatient!: PaginatedResponse<Patient>;
+  selectedStatus: string = '';
+  selectedPatient!: Patient;
+  selectedPsychologist!: Psychologist;
+  selectedTherapy!: Therapy;
+
+  rangeDates!: Date[];
+  minDate!: Date;
+
+  filtered: boolean = false;
 
   createForm: FormGroup;
-
-  createVisible: boolean = true;
-
-  selectedStatus: string = 'ALL';
-
-
-
 
   constructor(private therapyServices: TherapiesService,
               private formBuilder: FormBuilder,
@@ -53,96 +65,76 @@ export class TherapiesPageComponent implements OnInit{
     this.createForm = this.formBuilder.group({
       crpPsychologist: [null, Validators.required],
       cpfPatient: [null, Validators.required],
-      dateTime: [null, Validators.required]
+      dateTime: [new Date(), Validators.required]
     })
 
 
-
-    this.getCurrentDateTime();
   }
 
   ngOnInit(): void {
-    this.therapyServices.getTherapies().subscribe({
-      next: response => this.paginatedResponse = response,
-      error: err => console.error('Erro ao carregar terapias', err),
-    });
-
-    this.psychologistService.getPsychologists().subscribe({
-      next: response => this.paginatedResponsePsychologist = response,
-      error: err => console.error('Erro ao carregar psicólogos', err),
-    });
-
-    this.patientService.getPatients().subscribe({
-      next: response => this.paginatedResponsePatient = response,
-      error: err => console.error('Erro ao carregar patients', err),
-    })
+    this.loadBaseDate();
+    this.setPageDefaultDate();
   }
 
 
+  filterList(page: number, size: number): void {
 
-  filterList(inputPatientName: HTMLInputElement, inputPatientCPF: HTMLInputElement, inputPsychologistName: HTMLInputElement, inputPsychologistCRP: HTMLInputElement): void {
+    let cpfPatient = '';
+    let crpPsychologist = '';
 
-    this.therapyServices.getTherapiesFiltered(inputPatientName.value, inputPatientCPF.value, inputPsychologistName.value, inputPsychologistCRP.value)
-      .subscribe(result => {
-        this.paginatedResponse = result;
+    if(this.selectedPatient != undefined){
+      cpfPatient = this.selectedPatient.cpf;
+    }
+
+    if(this.selectedPsychologist != undefined){
+      crpPsychologist = this.selectedPsychologist.crp;
+    }
+
+
+    this.therapyServices.getTherapiesFiltered(cpfPatient, crpPsychologist, this.selectedStatus,  this.rangeDates[0], this.rangeDates[1])
+      .subscribe(response => {
+        this.responseTherapy = response;
       });
   }
 
-  cleanInput(inputPatientName: HTMLInputElement, inputPatientCPF: HTMLInputElement, inputPsychologistName: HTMLInputElement, inputPsychologistCRP: HTMLInputElement):void {
-
-    inputPatientName.value = '';
-    inputPatientCPF.value = '';
-    inputPsychologistName.value = '';
-    inputPsychologistCRP.value = '';
-
-    this.therapyServices.getTherapies().subscribe({
-      next: (response: PaginatedResponse<Therapy>) => this.paginatedResponse = response
-    })
-
-  }
-
-  getCurrentDateTime() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = ('0' + (now.getMonth() + 1)).slice(-2);
-    const day = ('0' + now.getDate()).slice(-2);
-    const hours = ('0' + now.getHours()).slice(-2);
-    const minutes = ('0' + now.getMinutes()).slice(-2);
-
-    const initialDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-
-    this.createForm.get('dateTime')?.setValue((initialDateTime));
-  }
-
-  getTimeNow(): Date{
-    return new Date()
-  }
-
-  private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
-
-  showCreate(){
-    this.createVisible = true;
-  }
-
   closeCard(){
+    this.detailsVisible = false;
     this.createVisible = false;
+    this.editVisible = false;
   }
 
-  getTherapiesData(){
-    this.therapyServices.getTherapies().subscribe({
-      next: (response: PaginatedResponse<Therapy>): PaginatedResponse<Therapy> => this.paginatedResponse = response
+  getTherapiesData(pageNumber: number, pageSize: number){
+
+    this.therapyServices.getTherapies(pageNumber, pageSize).subscribe({
+      next: (response: PaginatedResponse<Therapy>): PaginatedResponse<Therapy> => this.responseTherapy = response
+    })
+  }
+
+  getPatientsFiltered(event: AutoCompleteCompleteEvent) {
+    this.patientService.getPatientsFiltered(event.query, '', '', '', 0, 20).subscribe({
+      next: response => this.responsePatient = response,
+      error: err => console.error('Error loading patients', err),
+    })
+  }
+
+  getPsychologistFiltered(event: AutoCompleteCompleteEvent) {
+    this.psychologistService.getPatientsFiltered(event.query, '', '', '', 0, 20).subscribe({
+      next: response => this.responsePsychologist = response,
+      error: err => console.error('Error loading psychologist', err),
     })
   }
 
   createTherapy() {
     let createForm: TherapyPostRequest = this.createForm.value as TherapyPostRequest;
 
+    createForm.cpfPatient = this.extractCpfFromControl();
+    createForm.crpPsychologist = this.extractCrpFromControl();
+
+
     this.therapyServices.createTherapy(createForm).subscribe({
       next: (response: ResponseMessage): void => {
         if(response.statusCode == 201){
-          this.getTherapiesData();
+          this.getTherapiesData(0, 10);
           this.closeCard();
         }
       },
@@ -152,17 +144,81 @@ export class TherapiesPageComponent implements OnInit{
     })
   }
 
-  getTherapiesByStatus(){
-    if(this.selectedStatus == 'ALL'){
-      this.therapyServices.getTherapies().subscribe({
-        next: (response: PaginatedResponse<Therapy>): PaginatedResponse<Therapy> => this.paginatedResponse = response
-      })
-      return;
-    }
+  toggleCreate(){
+    this.createVisible = true;
+  }
 
-    this.therapyServices.getTherapiesWithStatus(this.selectedStatus).subscribe({
-      next: (response: PaginatedResponse<Therapy>): PaginatedResponse<Therapy> => this.paginatedResponse = response
+  toggleEdit(){
+    this.editVisible = !this.editVisible;
+  }
+
+  toggleDetails() {
+    this.detailsVisible = !this.detailsVisible;
+  }
+
+  editTherapy() {
+
+  }
+
+
+
+  getCurrentDateTime() {
+    let date = new Date();
+    date.toISOString()
+  }
+
+
+  plusMonthOnDate(date: Date, qtd: number): Date{
+    date.setMonth(date.getMonth() + qtd);
+    return date;
+  }
+
+
+  loadBaseDate(): void{
+    this.therapyServices.getTherapies(0, 10).subscribe({
+      next: response => this.responseTherapy = response,
+      error: err => console.error('Error loading therapies', err),
+    });
+
+    this.psychologistService.getPsychologists().subscribe({
+      next: response => this.responsePsychologist = response,
+      error: err => console.error('Error loading psychologists', err),
+
+    });
+
+    this.patientService.getPatients(1, 20).subscribe({
+      next: response => this.responsePatient = response,
+      error: err => console.error('Error loading patients', err),
     })
   }
 
+  setPageDefaultDate(): void{
+    this.getCurrentDateTime();
+
+    this.minDate = new Date();
+    this.minDate.setHours(6, 0, 0, 0);
+
+
+    this.rangeDates = [
+      this.minDate,
+      this.plusMonthOnDate(new Date(), 1)
+    ];
+
+    this.createForm.get('dateTime')?.setValue(this.minDate);
+
+    this.createForm.get('dateTime')?.setValue(this.minDate);
+
+  }
+
+  extractCpfFromControl() {
+    const patientData = this.createForm.get('cpfPatient')?.value;
+    return patientData ? patientData.cpf : null;
+  }
+
+  extractCrpFromControl() {
+    const psychologistData = this.createForm.get('crpPsychologist')?.value;
+    return psychologistData ? psychologistData.crp : null;
+  }
 }
+
+

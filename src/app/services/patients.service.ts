@@ -17,21 +17,35 @@ const httpOptions = {
 })
 export class PatientsService {
 
+
+
   private apiUrl = environment.apiUrl;
 
   constructor(private httpClient: HttpClient) { }
 
-  getPatients(): Observable<PaginatedResponse<Patient>>{
-    return this.httpClient.get<PaginatedResponse<Patient>>(this.apiUrl + '/patient/all');
+  getPatients(pageNumber: number, pageSize: number): Observable<PaginatedResponse<Patient>>{
+
+    let params = new HttpParams();
+    params = params.set('page', pageNumber.toString());
+    params = params.set('size', pageSize.toString());
+    params = params.set('sort', 'name');
+
+    return this.httpClient.get<PaginatedResponse<Patient>>(this.apiUrl + '/patient/all', { params });
   }
 
   getPatientsFiltered(name: string,
                       lastName: string,
                       cpf: string,
-                      email: string,): Observable<PaginatedResponse<Patient>>{
+                      email: string,
+                      pageNumber: number,
+                      pageSize: number): Observable<PaginatedResponse<Patient>>{
 
 
     let params = new HttpParams();
+
+    params = params.set('page', pageNumber.toString());
+    params = params.set('size', pageSize.toString());
+    params = params.set('sort', 'name');
 
     if (name !== '') {
       params = params.set('name', name);

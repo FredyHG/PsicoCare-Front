@@ -1,0 +1,114 @@
+@import "variables";
+
+@mixin button-style {
+  width: 6vw;
+  min-width: 70px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+  background-color: $button-background-color;
+  color: $button-text-color;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+@mixin input-style {
+  cursor: text;
+  background-color: #e8e8e8;
+  border: #3c4868 solid 1px;
+  height: 38px;
+  border-radius: 5px;
+  padding-left: 5px;
+  transition: border-color 0.3s ease;
+
+  &::placeholder{
+    color: #8589a1;
+  }
+
+  &:focus{
+    outline: none;
+    border: #3c4868 solid 2px;
+  }
+}
+
+@mixin table-style{
+  display: block;
+  width: 95%;
+  overflow-y: auto;
+  overflow-x: auto;
+  max-height: 50vh;
+  margin-bottom: 2vh;
+
+  span{
+    display: flex;
+    font-size: 20px;
+    i{
+      cursor: pointer;
+    }
+    gap: 4px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c4c4c4;
+  }
+
+  tr:nth-child(even) {
+    background-color: #EEECED;
+  }
+
+  tr:nth-child(odd) {
+    background-color: #F6F6F6;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 8px;
+    word-wrap: break-word;
+  }
+
+  td{
+    max-width: 120px;
+    color: #8E8E95;
+  }
+
+  th {
+    background-color: #E8E8EA;
+    color: #37435D;
+    position: sticky;
+    top: 0;
+  }
+
+}
+
+@mixin custom-scroll-bar-y{
+
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c4c4c4;
+  }
+}
+

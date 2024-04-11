@@ -1,3 +1,5 @@
+@import "../../../styles/mixins";
+
 .login-page {
   position: fixed;
   top: 0;
@@ -7,8 +9,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
-
 
   .login-page-inner{
     padding: 15px;
@@ -28,6 +28,24 @@
       gap: 15px;
       flex-direction: column;
 
+      .input-field{
+        display: flex;
+        flex-direction: column;
+        color: #3c4868;
+        .field-title{
+          font-size: 14px;
+        }
+
+        &:focus{
+          outline: none;
+          border: #3c4868 solid 2px;
+        }
+
+        //.error{
+        //  color: #f10000;
+        //}
+      }
+
       input {
         cursor: text;
         background-color: #e8e8e8;
@@ -46,6 +64,26 @@
         outline: none;
         border: #3c4868 solid 2px;
       }
+
+      .login-actions{
+        display: flex;
+        justify-content: flex-end;
+        width: 100%;
+
+        button{
+          @include button-style;
+
+          &:active{
+            background-color: #6f78ab;
+            color: #e0e0e0;
+          }
+
+          &:disabled{
+            background-color: #676d81;
+            cursor: not-allowed;
+          }
+        }
+      }
     }
 
     @media screen and (max-width: 600px){
@@ -56,53 +94,18 @@
   }
 }
 
-.input-field{
-  display: flex;
-  flex-direction: column;
-  color: #3c4868;
-  span{
-    font-size: 14px;
-  }
-
-  &:focus{
-    outline: none;
-    border: #3c4868 solid 2px;
-  }
-}
-
-
-
-.login-actions{
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-
-  button{
-    width: 6vw;
-    min-width: 70px;
-    height: 30px;
-    border: none;
-    cursor: pointer;
-    background-color: #39425d;
-    color: #d2d1d1;
-    border-radius: 4px;
+.error-field{
+  .error-message{
+    color: #ff3333;
     font-size: 12px;
-    font-family: 'Roboto', sans-serif;
-    transition: background-color 0.3s, color 0.3s;
-
-    &:active{
-      background-color: #6f78ab;
-      color: #e0e0e0;
-    }
-
-    &:disabled{
-      background-color: #676d81;
-      cursor: not-allowed;
-    }
   }
 }
 
-.error{
-  color: #f10000;
-}
+
+
+
+
+
+
+
 

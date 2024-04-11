@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {NgClass, NgStyle} from "@angular/common";
+import {NgClass, NgIf, NgStyle} from "@angular/common";
 import {AuthService} from "../../services/auth.service";
 import {UserLogin} from "../../models/UserLogin";
 import {AuthResponse} from "../../models/dto/AuthResponse";
@@ -13,7 +13,8 @@ import {Router} from "@angular/router";
   imports: [
     ReactiveFormsModule,
     NgClass,
-    NgStyle
+    NgStyle,
+    NgIf
   ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
@@ -31,8 +32,8 @@ export class LoginPageComponent {
     }
 
     this.loginForm = this.formBuilder.group({
-      email: [null, [Validators.required]],
-      password: [null, Validators.required]
+      email: [null, [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     });
 
 
@@ -44,10 +45,8 @@ export class LoginPageComponent {
 
     this.authService.submitLoginForm(form).subscribe({
       next: (response: AuthResponse): void => {
-        console.log(response)
         this.authService.login(response.refresh_token, response.access_token)
       }, error: (err): void => {
-        console.log(err)
       }, complete: (): void => {
         this.router.navigate(['/patients']);
       }
@@ -61,13 +60,12 @@ export class LoginPageComponent {
   checkField(field: string) {
     if(this.loginForm.controls[field].value === null) return false;
 
-    return this.loginForm.controls[field].invalid;
+    return this.loginForm.controls[field].invalid || this.loginForm.controls[field].touched;
 
   }
 
   reloadPage(): void {
     window.location.reload();
   }
-
 
 }

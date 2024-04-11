@@ -33,7 +33,7 @@ export class AppComponent {
   buttonHoverState: ButtonHoverState = {
     patient: false,
     therapy: false,
-    schedule: false
+    profile: false
   };
 
 
@@ -53,13 +53,12 @@ export class AppComponent {
 
   validRoute(): boolean{
 
-    if(!this.isUserLoggedIn){
+    if(!this.isUserLoggedIn || this.router.url == '/maintenance'){
       return false;
     }
 
+
     return this.router.url != '/login';
-
-
   }
 
   logout(){
@@ -74,5 +73,5 @@ export class AppComponent {
 type ButtonHoverState = {
   patient: boolean;
   therapy: boolean;
-  schedule: boolean;
+  profile: boolean;
 };

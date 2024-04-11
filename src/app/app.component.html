@@ -14,16 +14,16 @@
           <i [ngClass]="buttonHoverState.therapy ? 'ph-fill ph-brain button-icon' : 'ph ph-brain button-icon'"></i>
           <span class="button-text">Therapies</span>
         </button>
-        <button class="tab-button" (mouseenter)="onMouseEnter('schedule')" (mouseleave)="onMouseLeave('schedule')">
-          <i [ngClass]="buttonHoverState.schedule ? 'bx button-icon ph-fill ph-calendar' : 'ph ph-calendar button-icon'"></i>
-          <span class="button-text">Schedules</span>
+        <button class="tab-button" (mouseenter)="onMouseEnter('profile')" (mouseleave)="onMouseLeave('profile')" (click)="navigateTo('/profile')">
+          <i [ngClass]="buttonHoverState.profile ? 'bx button-icon ph-fill ph-user' : 'ph ph-user button-icon'"></i>
+          <span class="button-text">Profile</span>
         </button>
 
       </div>
     </div>
 
     <div class="logout-area">
-      <button class="tab-button" (click)="logout()"><i class="ph ph-sign-out"></i>Logout</button>
+      <button class="tab-button" (click)="logout()"><i class="ph ph-sign-out"></i><span class="logout-text">Logout</span></button>
     </div>
 
   </nav>

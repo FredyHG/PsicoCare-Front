@@ -1,0 +1,76 @@
+<div class="profile-page" *ngIf="profile">
+  <div class="details-container">
+    <div class="container-title">
+      <span><i class="ph ph-user-circle-gear"></i>Details</span>
+    </div>
+    <div class="name-lastname-container">
+      <div class="name field">
+        <span class="field-title">Name</span>
+        <span class="field-content">{{profile.name | titlecase }} </span>
+      </div>
+      <div class="lastname field">
+        <span class="field-title">Last N.</span>
+        <span class="field-content">{{profile.lastName | titlecase }}</span>
+      </div>
+    </div>
+    <div class="crp-phone-container">
+      <div class="crp field">
+        <span class="field-title">Crp</span>
+        <span class="field-content">{{profile.crp}}</span>
+      </div>
+      <div class="phone field">
+        <span class="field-title">Phone</span>
+        <span class="field-content">{{profile.phone}}</span>
+      </div>
+    </div>
+    <div class="email-container">
+      <div class="email field">
+        <span class="field-title">Email</span>
+        <span class="field-content">{{profile.email}}</span>
+        <div class="btn-change">
+          <span><i class="ph ph-pencil-simple" (click)="changeEmail()"></i></span>
+        </div>
+      </div>
+
+    </div>
+    <div class="password-container">
+      <div class="password field">
+        <span class="field-title">Password</span>
+        <span>*******</span>
+        <div class="btn-change">
+          <span><i class="ph ph-pencil-simple" (click)="toggleChangeWindow()"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="change-password-window" *ngIf="changePasswordVisible">
+  <div class="change-password-container">
+    <div class="change-password-header">
+      <span>Change</span>
+      <i class="ph ph-x" (click)="closeCard()" style="cursor: pointer"></i>
+    </div>
+    <form class="change-password-form" [formGroup]="changePasswordForm" (submit)="changePassword()">
+      <div class="old-password field">
+        <span class="field-title">Old password</span>
+        <input type="password" formControlName="oldPassword">
+      </div>
+
+      <div class="new-password field">
+        <span class="field-title">New password</span>
+        <input type="password" formControlName="newPassword" #newPassword>
+      </div>
+
+      <div class="new-password field" *ngIf="newPassword.value != ''">
+        <span class="field-title">Confirm Password</span>
+        <input type="password" #confirmPassword>
+      </div>
+      <div class="change-actions">
+        <button class="btn-change" type="submit" [disabled]="!changePasswordForm.valid">Change</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<p-toast></p-toast>

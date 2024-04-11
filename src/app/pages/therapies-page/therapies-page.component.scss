@@ -1,38 +1,143 @@
+@import "../../../styles/mixins";
+
+
 .therapies-page {
   width: 100%;
   display: flex;
   flex-direction: row;
+  .table-area {
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .inputs-area {
+      margin-top: 6vh;
+      display: flex;
+      width: 80%;
+      background-color: #f5f3f3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 5vh;
+      flex-direction: column;
+      height: auto;
+      justify-content: space-around;
+      border-radius: 4px;
+
+      .filter-area-header {
+        margin-top: 2vh;
+        margin-bottom: 2vh;
+        margin-left: 1vw;
+        width: 100%;
+        display: flex;
+        justify-content: left;
+
+        .filter-text {
+          font-size: 18px;
+          color: #39425D;
+          i{
+            padding-right: 2px;
+            font-weight: bold;
+            color: #39425D;
+          }
+        }
+      }
+
+      .filter-selects{
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+
+        .patient-psychologist, .status-date{
+          display: flex;
+          justify-content: space-around;
+          gap: 5%;
+          .select-field{
+            display: flex;
+            flex-direction: column;
+            width: 40%;
+
+            span{
+              color: #37435D;
+            }
+
+            .select-status{
+              height: 38px;
+              background-color: #D5D5D5;
+              color: #37435D;
+              border: none;
+              border-radius: 4px;
+              padding-left: 5px;
+            }
+          }
+        }
+
+
+      }
+      .filter-actions-container{
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        gap: 2vh;
+        margin-right: 1.3vw;
+        .filter-actions{
+          display: flex;
+          width: 100%;
+          justify-content: flex-end;
+          gap: 2vh;
+          margin-right: 1.3vw
+        }
+      }
+
+    }
+
+    .table-area-container{
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      width: 80%;
+      background-color: #f5f3f3;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      height: 60vh;
+
+      .table-header-container{
+        display: flex;
+        flex-direction: row;
+        margin: 2vh 1.3vw 2vh 1vw;
+        justify-content: space-between;
+        align-items: center;
+
+        .header-actions{
+          display: flex;
+          gap: 3%;
+          width: 100%;
+          align-items: center;
+          justify-content: flex-end;
+        }
+      }
+
+
+    }
+
+    .table-content-container{
+      display: flex;
+      justify-content: center;
+      overflow: auto;
+      flex-direction: column;
+      align-items: center;
+      .table-content {
+       @include table-style;
+      }
+    }
+
+  }
 }
 
-.table-area {
-  width: 100%;
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
 
-.filter-clean{
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-  gap: 2vh;
-  margin-right: 1.3vw
-}
+
 
 .btn-create, .btn-clean, .btn-filter, .btn-edit{
-  width: 6vw;
-  min-width: 70px;
-  height: 30px;
-  border: none;
-  cursor: pointer;
-  background-color: #39425d;
-  color: #d2d1d1;
-  border-radius: 4px;
-  font-size: 12px;
-  font-family: 'Roboto', sans-serif;
-  transition: background-color 0.3s, color 0.3s;
+  @include button-style;
   i{
     vertical-align: -0.1vh;
     margin-right: 3px;
@@ -44,82 +149,15 @@
   }
 }
 
-.inputs-area {
-  margin-top: 6vh;
-  display: flex;
-  width: 80%;
-  background-color: #f5f3f3;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 5vh;
-  flex-direction: column;
-  height: 40vh;
-  justify-content: space-around;
-  border-radius: 4px;
 
-  .email-and-cpf,
-  .name-and-lastname {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 5%;
 
-    span {
-      color: #3c4868;
-      font-size: 14px;
-    }
-  }
-
-  .email-and-cpf {
-    padding-top: 15px;
-  }
-
-  .filter {
-    margin-top: 2vh;
-    margin-bottom: 2vh;
-    margin-left: 1vw;
-    width: 100%;
-    display: flex;
-    justify-content: left;
-
-    .filter-text {
-      font-size: 18px;
-      color: #39425D;
-      i{
-        padding-right: 2px;
-        font-weight: bold;
-        color: #39425D;
-      }
-    }
-  }
-}
-
-.name-input,
-.last-name-input,
-.input-cpf,
-.email-input,
-.edit-field{
-  width: 45%;
+.field{
+  width: 100%;
   display: flex;
   flex-direction: column;
-
 
   input {
-    cursor: text;
-    background-color: #e8e8e8;
-    border: #3c4868 solid 1px;
-    height: 38px;
-    border-radius: 5px;
-    padding-left: 5px;
-    transition: border-color 0.3s ease;
-
-    &::placeholder{
-      color: #8589a1;
-    }
-
-    &:focus{
-      outline: none;
-      border: #3c4868 solid 2px;
-    }
+    @include input-style;
   }
 }
 
@@ -127,7 +165,7 @@
   width: auto;
 }
 
-.filter-actions {
+.filter-actions-container {
   display: flex;
   flex-direction: row;
 
@@ -135,15 +173,6 @@
   margin-bottom: 2vh;
 }
 
-.table-area-container{
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-  background-color: #f5f3f3;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 60vh;
-}
 
 @media screen and (max-width: 600px) {
   .patient-page {
@@ -167,62 +196,12 @@
 
 
 
-.table-header-container{
-  display: flex;
-  flex-direction: row;
-  margin: 2vh 1.3vw 2vh 1vw;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.table-content {
-  display: block;
-  width: 95%;
-  overflow-y: auto;
-  overflow-x: auto;
-  max-height: 50vh;
-  margin-bottom: 2vh;
-
-  span{
-    display: flex;
-    font-size: 20px;
-    i{
-      cursor: pointer;
-    }
-    gap: 4px;
-  }
-
-  &::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #c4c4c4;
-  }
-
-  tr:nth-child(even) {
-    background-color: #EEECED;
-  }
-
-  tr:nth-child(odd) {
-    background-color: #F6F6F6;
-  }
-}
-
-.header-text{
+.table-container-title{
   color: #39425e;
 }
 
-.table-content-container{
-  display: flex;
-  justify-content: center;
-  overflow: auto;
-}
+
 
 table {
   width: 100%;
@@ -248,7 +227,7 @@ th {
 }
 
 
-.details, .create-card{
+.details-window, .create-window, .edit-window{
   position: fixed;
   top: 0;
   left: 0;
@@ -259,19 +238,19 @@ th {
   justify-content: center;
   align-items: center;
 
-  .details-inner, .create-inner {
-    font-family: "Roboto", sans-serif;
+  .details-container, .create-container, .edit-container {
     color: #39425e;
     background-color: #f5f2f2;
     padding: 20px;
-    width: 25vw;
+    width: 30vw;
     height: auto;
     min-width: 250px;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 15px;
 
     @media screen and (max-width: 600px){
       width: 60vw;
@@ -279,14 +258,48 @@ th {
   }
 }
 
-.edit-input-container, .create-input-container{
+.details-content{
   display: flex;
   width: 100%;
+  flex-direction: column;
+  gap: 2vh;
+  align-items: center;
+
+  .patient-psychologist-fields{
+    display: flex;
+    width: 90%;
+    gap: 10px;
+  }
+
+  .field{
+    display: flex;
+    flex-direction: column;
+    background-color: #e1e1e1;
+    width: 90%;
+    border: solid 1px #b2b3c0;
+    border-radius: 4px;
+    padding: 5px;
+    span{
+      color: #39425d;
+      font-size: 14px;
+    }
+
+    .field-title{
+      font-size: 12px;
+      color: #8589a1;
+    }
+
+  }
+}
+
+.edit-form, .create-form{
+  display: flex;
+  width: 90%;
   flex-direction: column;
   gap: 10px;
 }
 
-.edit-input-container, .body-container{
+.edit-form, .details-content{
   overflow-y: auto;
   &::-webkit-scrollbar {
     width: 3px;
@@ -309,8 +322,8 @@ th {
 }
 
 
-.create-input-container{
-  .name-and-lastname{
+.create-form{
+  .patient-psychologist-fields{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -319,21 +332,8 @@ th {
   gap: 10px;
 }
 
-.header-actions{
-  display: flex;
-  gap: 3%;
-  width: 100%;
-  align-items: center;
-  justify-content: flex-end;
-}
 
-.select-status{
-  height: 30px;
-  background-color: #39425d;
-  color: #d2d1d1;
-  border: none;
-  border-radius: 4px;
-}
+
 
 .default-select{
   height: 38px;
@@ -342,10 +342,54 @@ th {
   border-radius: 5px
 }
 
-.close-container{
+.details-container-header, .create-container-header, .edit-container-header{
   display: flex;
   width: 100%;
   justify-content: space-between;
   align-items: center;
   padding-bottom: 2vh;
 }
+
+
+
+:host ::ng-deep{
+  .p-inputtext {
+    background-color: #e8e8e8;
+    border: #3c4868 solid 1px;
+    height: 38px;
+    border-radius: 5px;
+    padding-left: 5px;
+    box-shadow: none;
+  }
+  .p-calendar {
+    width: 100%;
+  }
+
+  .p-autocomplete-panel{
+    padding-left: 5px;
+    background-color: #e8e8e8;
+  }
+
+  .p-autocomplete, .p-autocomplete-input{
+    width: 100%;
+  }
+
+  .p-paginator {
+    background-color: #f5f3f3;
+  }
+
+  .p-highlight{
+    background-color: #d9d8d8;
+    color: #39425e;
+  }
+
+  .p-paginator-pages{
+    .p-paginator-page{
+      min-width: 1.6rem;
+      height: 1.6rem;
+    }
+  }
+
+}
+
+

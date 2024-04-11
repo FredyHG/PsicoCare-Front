@@ -1,57 +1,56 @@
 <div class="patient-page">
   <div class="table-area">
-
     <div class="inputs-area">
-      <div class="filter">
+      <div class="filter-area-header">
         <span class="filter-text"><i class="ph ph-faders-horizontal"></i>FILTER</span>
       </div>
-      <div class="name-and-lastname">
-        <div class="name-input" >
+      <div class="name-lastname-fields">
+        <div class="name-field" >
           <span>Name</span>
           <input #inputName type="text" placeholder="Write here">
         </div>
-        <div class="last-name-input">
+        <div class="last-name-field">
           <span>Last Name</span>
           <input #inputLastName type="text" placeholder="Write here">
         </div>
       </div>
-      <div class="email-and-cpf">
-        <div class="input-cpf">
+      <div class="email-cpf-fields">
+        <div class="cpf-field">
           <span>CPF</span>
           <input #inputCPF type="text" placeholder="Write here">
         </div>
-        <div class="email-input">
+        <div class="email-field">
           <span>Email</span>
           <input #inputEmail type="email" placeholder="Write here">
         </div>
       </div>
-      <div class="filter-actions">
-        <div class="filter-clean">
-          <button class="btn-filter" (click)="filterList(inputName, inputLastName, inputCPF, inputEmail)"><i class="ph ph-funnel"></i>FILTER</button>
+      <div class="filter-actions-container">
+        <div class="filter-actions">
+          <button class="btn-filter" (click)="filterList(inputName, inputLastName, inputCPF, inputEmail, 0, 10)"><i class="ph ph-funnel"></i>FILTER</button>
           <button class="btn-clean" (click)="cleanInput(inputName, inputLastName, inputCPF, inputEmail)"><i class="ph ph-broom"></i>CLEAN</button>
         </div>
       </div>
     </div>
     <div class="table-area-container">
       <div class="table-header-container">
-        <div class="header-text">
+        <div class="table-container-title">
           <span><i class="ph ph-user-list"></i>PATIENTS</span>
         </div>
-        <div class="create-delete">
-          <button class="btn-create" (click)="showCreate()"><i class="ph ph-plus-circle"></i>CREATE </button>
+        <div class="table-actions">
+          <button class="btn-create" (click)="showCreate()"><i class="ph ph-plus-circle"></i>CREATE</button>
         </div>
       </div>
       <div class="table-content-container">
         <div class="table-content">
           <table>
             <thead>
-            <tr>
-              <th>NAME</th>
-              <th>LAST N.</th>
-              <th>EMAIL</th>
-              <th>CPF</th>
-              <th class="th-actions">ACTIONS</th>
-            </tr>
+              <tr>
+                <th>NAME</th>
+                <th>LAST N.</th>
+                <th>EMAIL</th>
+                <th>CPF</th>
+                <th class="th-actions">ACTIONS</th>
+              </tr>
             </thead>
             <tbody>
             <tr *ngFor="let item of paginatedResponse?.content">
@@ -61,8 +60,8 @@
               <td class="td-cpf table-row">{{ item.cpf }}</td>
               <td class="td-actions">
                 <span>
-                  <i class="ph ph-eye" (click)="showDetails(item)"></i>
-                  <i class="ph ph-pencil-simple" (click)="showEdit(item)"></i>
+                  <i class="ph ph-eye" (click)="showDetails(item); selectedPatient = item"></i>
+                  <i class="ph ph-pencil-simple" (click)="showEdit(item); selectedPatient = item"></i>
                   <i class="ph ph-minus-circle" (click)="showPopup(); selectedPatient = item"></i>
                 </span>
               </td>
@@ -70,84 +69,90 @@
             </tbody>
           </table>
         </div>
+        <p-paginator *ngIf="paginatedResponse"
+                     [first]="0"
+                     [rows]="paginatedResponse.size"
+                     [totalRecords]="paginatedResponse.totalElements"
+                     (onPageChange)="filtered ? filterList(inputName, inputLastName, inputCPF, inputEmail, $event.page!, 10) : getPatientsData($event.page!, 10)"
+        ></p-paginator>
       </div>
     </div>
   </div>
 </div>
-<div *ngIf="detailsVisible" class="details">
-  <div class="details-inner">
-    <div class="close-container">
+<div *ngIf="detailsVisible" class="details-window">
+  <div class="details-container">
+    <div class="details-container-header">
       <span>Details</span>
       <i class="ph ph-x" (click)="closeCard()"></i>
     </div>
-    <div class="body-container">
+    <div class="details-content">
       <div class="detail-name-lastname">
-        <div class="detail-field">
-          <span class="detail-title">Name</span>
+        <div class="field name">
+          <span class="field-title">Name</span>
           <span> {{ selectedPatient.name }} </span>
         </div>
 
-        <div class="detail-field">
-          <span class="detail-title">Last N.</span>
+        <div class="field last-name">
+          <span class="field-title">Last N.</span>
           <span> {{ selectedPatient.lastName }} </span>
         </div>
       </div>
 
-      <div class="detail-field">
-        <span class="detail-title">Email</span>
+      <div class="field email">
+        <span class="field-title">Email</span>
         <span> {{ selectedPatient.email }} </span>
       </div>
 
-      <div class="detail-field">
-        <span class="detail-title">BirthDate</span>
+      <div class="field birthdate">
+        <span class="field-title">BirthDate</span>
         <span> {{ selectedPatient.birthDateView | date }} </span>
       </div>
 
-      <div class="detail-field">
-        <span class="detail-title">Phone</span>
+      <div class="field phone">
+        <span class="field-title">Phone</span>
         <span> {{selectedPatient.phone}} </span>
       </div>
 
-      <div class="detail-field">
-        <span class="detail-title">Cpf</span>
+      <div class="field cpf">
+        <span class="field-title">Cpf</span>
         <span> {{ selectedPatient.cpf }} </span>
       </div>
 
-      <div class="detail-field">
-        <span class="detail-title">Create At.</span>
+      <div class="field creatAt">
+        <span class="field-title">Create At.</span>
         <span> {{ selectedPatient.createAtView | date }} </span>
       </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="editVisible" class="details">
-  <div class="details-inner">
-    <div class="close-container">
+<div *ngIf="editVisible" class="edit-window">
+  <div class="edit-container">
+    <div class="edit-container-header">
       <span>Edit</span>
       <i class="ph ph-x" (click)="closeCard()"></i>
     </div>
-    <form class="edit-input-container" [formGroup]="editForm" (submit)="editPatient()">
-      <div class="edit-field">
-        <span class="detail-title">Name</span>
+    <form class="edit-form" [formGroup]="editForm" (submit)="editPatient()">
+      <div class="field name">
+        <span class="field-title">Name</span>
         <input type="text" placeholder="{{getDetailData().name}}" formControlName="name">
       </div>
-      <div class="edit-field">
-        <span class="detail-title">Last N.</span>
+      <div class="field last-name">
+        <span class="field-title">Last N.</span>
         <input type="text" placeholder="{{getDetailData().lastName}}" formControlName="lastName">
       </div>
-      <div class="edit-field">
-        <span class="detail-title">Email</span>
+      <div class="field email">
+        <span class="field-title">Email</span>
         <input type="text" placeholder="{{getDetailData().email}}" formControlName="email">
       </div>
-      <div class="edit-field">
-        <span class="detail-title">Phone</span>
+      <div class="field phone">
+        <span class="field-title">Phone</span>
         <input type="text" placeholder="{{getDetailData().phone}}" formControlName="phone" mask="(00)00000-0000" [dropSpecialCharacters]="false">
       </div>
 
-      <div class="edit-field">
-        <span class="detail-title">BirthDate</span>
-        <input type="date" [max]="minDate" [min]="maxDate" formControlName="birthDate">
+      <div class="field birthdate">
+        <span class="field-title">BirthDate</span>
+        <p-calendar formControlName="birthDate" [minDate]="minDate" [defaultDate]="minDate"></p-calendar>>
       </div>
       <div class="edit-actions">
         <button class="btn-edit" type="submit">EDIT</button>
@@ -157,43 +162,43 @@
   </div>
 </div>
 
-<div class="create-card" *ngIf="createVisible">
-  <div class="details-inner">
-    <div class="close-container">
+<div class="create-window" *ngIf="createVisible">
+  <div class="create-container">
+    <div class="create-container-header">
       <span>Create</span>
       <i class="ph ph-x" (click)="closeCard()"></i>
     </div>
-    <form class="create-input-container" (submit)="createPatient()" [formGroup]="editForm">
-      <div class="name-and-lastname">
-        <div class="name-input" >
-          <span>Name</span>
+    <form class="create-form" (submit)="createPatient()" [formGroup]="editForm" >
+      <div class="name-lastname-fields">
+        <div class="name field" >
+          <span class="field-title">Name</span>
           <input type="text" formControlName="name">
         </div>
-        <div class="last-name-input">
-          <span>Last Name</span>
+        <div class="last-name field">
+          <span class="field-title">Last Name</span>
           <input type="text" formControlName="lastName">
         </div>
       </div>
-      <div class="edit-field">
-        <span class="detail-title">Email</span>
+      <div class="email field">
+        <span class="field-title">Email</span>
         <input type="text" formControlName="email">
       </div>
 
-      <div class="edit-field">
-        <span class="detail-title">CPF</span>
+      <div class="cpf field">
+        <span class="field-title">CPF</span>
         <input type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="false">
       </div>
-      <div class="edit-field">
-        <span class="detail-title">Phone</span>
+      <div class="phone field">
+        <span class="field-title">Phone</span>
         <input type="text" formControlName="phone" mask="(00)00000-0000" [dropSpecialCharacters]="false">
       </div>
 
-      <div class="edit-field">
-        <span class="detail-title">BirthDate</span>
-        <input type="date" [max]="minDate" [min]="maxDate" formControlName="birthDate">
+      <div class="birthDate field">
+        <span class="field-title">BirthDate</span>
+        <p-calendar formControlName="birthDate" [minDate]="minDate" [defaultDate]="minDate"></p-calendar>
       </div>
-      <div class="edit-actions">
-      <button class="btn-edit" type="submit">CREATE</button>
+      <div class="create-actions">
+        <button class="btn-edit" type="submit" [disabled]="!editForm.valid">CREATE</button>
       </div>
     </form>
   </div>

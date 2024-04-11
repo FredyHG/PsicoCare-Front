@@ -21,27 +21,33 @@ export class TherapiesService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getTherapiesFiltered(patientName: string, patientCPF: string, psychologistName: string, psychologistCRP: string): Observable<PaginatedResponse<Therapy>> {
+  getTherapiesFiltered(patientCPF: string, psychologistCRP: string, statusTherapy: string, startDate: Date, endDate: Date): Observable<PaginatedResponse<Therapy>> {
     let params = new HttpParams();
 
-    if (patientName !== '') {
-      params = params.set('patientName', patientName);
-    }
     if (patientCPF !== '') {
       params = params.set('patientCPF', patientCPF);
-    }
-    if (psychologistName !== '') {
-      params = params.set('psychologistName', psychologistName);
     }
     if (psychologistCRP !== '') {
       params = params.set('psychologistCRP', psychologistCRP);
     }
+    if (statusTherapy !== '') {
+      params = params.set('status', statusTherapy);
+    }
+
+    params = params.set('startDate', startDate.toISOString());
+    params = params.set('endDate', endDate.toISOString());
 
     return this.httpClient.get<PaginatedResponse<Therapy>>(this.apiUrl + '/therapy/filter', { params });
   }
 
-  getTherapies(): Observable<PaginatedResponse<Therapy>> {
-    return this.httpClient.get<PaginatedResponse<Therapy>>(this.apiUrl + '/therapy/all');
+  getTherapies(pageNumber: number, pageSize: number): Observable<PaginatedResponse<Therapy>> {
+
+    let params = new HttpParams();
+    params = params.set('page', pageNumber.toString());
+    params = params.set('size', pageSize.toString());
+    params = params.set('sort', 'dateTime');
+
+    return this.httpClient.get<PaginatedResponse<Therapy>>(this.apiUrl + '/therapy/all', { params });
   }
 
   getTherapiesWithStatus(status: string): Observable<PaginatedResponse<Therapy>> {

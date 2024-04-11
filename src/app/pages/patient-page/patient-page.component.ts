@@ -9,6 +9,10 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {PatientPutRequest} from "../../models/dto/PatientPutRequest";
 import {ResponseMessage} from "../../models/dto/ResponseMessage";
 import {NgxMaskDirective} from "ngx-mask";
+import {PaginatorModule} from "primeng/paginator";
+import {response} from "express";
+import {first} from "rxjs";
+import {CalendarModule} from "primeng/calendar";
 
 const AUTH_API = 'http://localhost:8080/api/patient';
 
@@ -26,7 +30,9 @@ const httpOptions = {
     ConfirmPopupComponent,
     DatePipe,
     ReactiveFormsModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    PaginatorModule,
+    CalendarModule
   ],
   templateUrl: './patient-page.component.html',
   styleUrl: './patient-page.component.scss'
@@ -42,12 +48,14 @@ export class PatientPageComponent {
   detailsVisible: boolean = false;
   createVisible: boolean = false;
   editVisible: boolean = false;
+  filtered: boolean = false;
 
   selectedPatient!: Patient;
+  totalElements!: number;
 
-  minDate: string = '';
+  minDate!: Date;
 
-  maxDate: string = '';
+
   showCreate(){
     this.createVisible = true;
   }
@@ -57,11 +65,10 @@ export class PatientPageComponent {
               private patientService: PatientsService,
               private formBuilder: FormBuilder) {
 
-    this.patientService.getPatients().subscribe({
-      next: (response: PaginatedResponse<Patient>): PaginatedResponse<Patient> => this.paginatedResponse = response
+    this.patientService.getPatients(0, 10).subscribe({
+      next: (response: PaginatedResponse<Patient>): PaginatedResponse<Patient> => this.paginatedResponse = response,
+      complete: () => this.totalElements = this.paginatedResponse.totalElements
     })
-
-    this.setMinAndMaxDate();
 
     this.editForm = this.formBuilder.group({
       name: [null, [Validators.required]],
@@ -72,10 +79,12 @@ export class PatientPageComponent {
       phone: [null, Validators.required]
     });
 
+    this.setPageDefaultDate();
   }
 
-  getPatientsData(){
-    this.patientService.getPatients().subscribe({
+  getPatientsData(pageNumber: number, pageSize: number){
+
+    this.patientService.getPatients(pageNumber, pageSize).subscribe({
       next: (response: PaginatedResponse<Patient>): PaginatedResponse<Patient> => this.paginatedResponse = response
     })
   }
@@ -112,7 +121,7 @@ export class PatientPageComponent {
   handleConfirmation(confirmed: boolean) {
     if (confirmed) {
       this.patientService.deletePatient(this.selectedPatient.cpf).subscribe({
-        complete: () => this.getPatientsData()
+        complete: () => this.getPatientsData(1, 10)
       });
     }
   }
@@ -123,39 +132,29 @@ export class PatientPageComponent {
 
   cleanInput(inputName: HTMLInputElement, inputLastName: HTMLInputElement, inputCPF: HTMLInputElement, inputEmail: HTMLInputElement):void {
 
+    this.filtered = false;
+
     inputName.value = '';
     inputLastName.value = '';
     inputCPF.value = '';
     inputEmail.value = '';
 
-    this.patientService.getPatients().subscribe({
+    this.patientService.getPatients(1, 10).subscribe({
       next: (response: PaginatedResponse<Patient>): PaginatedResponse<Patient> => this.paginatedResponse = response
     })
 
   }
 
-  filterList(inputName: HTMLInputElement, inputLastName: HTMLInputElement, inputCPF: HTMLInputElement, inputEmail: HTMLInputElement): void {
+  filterList(inputName: HTMLInputElement, inputLastName: HTMLInputElement, inputCPF: HTMLInputElement, inputEmail: HTMLInputElement, pageNumber: number, pageSize: number): void {
 
-    this.patientService.getPatientsFiltered(inputName.value, inputLastName.value, inputCPF.value, inputEmail.value)
+    this.filtered = true;
+
+    this.patientService.getPatientsFiltered(inputName.value, inputLastName.value, inputCPF.value, inputEmail.value, pageNumber, pageSize)
       .subscribe(result => {
         this.paginatedResponse = result;
       });
   }
 
-  getPatients(){
-    this.httpClient.get(AUTH_API, httpOptions).subscribe(value => console.log(value))
-  }
-
-  setMinAndMaxDate(): void{
-    const minDate = new Date();
-    const maxDate = new Date();
-
-    maxDate.setFullYear(maxDate.getFullYear() - 100);
-    minDate.setFullYear(minDate.getFullYear() - 3);
-
-    this.minDate = this.formatDate(minDate);
-    this.maxDate = this.formatDate(maxDate);
-  }
 
   editPatient(){
     this.editForm.get('cpf')?.setValue(this.selectedPatient.cpf)
@@ -165,7 +164,7 @@ export class PatientPageComponent {
     this.patientService.editPatient(editForm).subscribe({
       next: (response: ResponseMessage): void => {
         if(response.statusCode == 200){
-          this.getPatientsData();
+          this.getPatientsData(1, 10);
           this.closeCard();
         }
       },
@@ -181,7 +180,7 @@ export class PatientPageComponent {
     this.patientService.createPatient(createForm).subscribe({
       next: (response: ResponseMessage): void => {
         if(response.statusCode == 201){
-          this.getPatientsData();
+          this.getPatientsData(1, 10);
           this.closeCard();
         }
       },
@@ -190,6 +189,24 @@ export class PatientPageComponent {
       }
     })
   }
+
+  getCurrentDateTime() {
+    let date = new Date();
+    date.toISOString()
+  }
+
+
+
+  setPageDefaultDate(): void{
+    this.getCurrentDateTime();
+
+    this.minDate = new Date();
+    this.minDate.setDate(-3);
+
+    this.editForm.get('birthDate')?.setValue(this.minDate);
+
+  }
+
 }
 
 

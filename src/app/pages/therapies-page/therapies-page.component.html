@@ -1,34 +1,43 @@
 <div class="therapies-page">
-  <div class="table-area">
+  <div class="table-area" *ngIf="responseTherapy">
 
-    <div class="inputs-area">
-      <div class="filter">
+    <div class="inputs-area" >
+      <div class="filter-area-header">
         <span class="filter-text"><i class="ph ph-faders-horizontal"></i>FILTER</span>
       </div>
-      <div class="name-and-lastname">
-        <div class="name-input" >
-          <span>Patient Name</span>
-          <input #inputPatientName type="text" placeholder="Write here">
+      <div class="filter-selects" >
+        <div class="patient-psychologist">
+          <div class="select-field">
+            <span>Psychologist</span>
+            <p-autoComplete [(ngModel)]="selectedPsychologist" [suggestions]="responsePsychologist.content" (completeMethod)="getPsychologistFiltered($event)" field="name" placeholder="psychologist name"></p-autoComplete>
+
+          </div>
+          <div class="select-field">
+            <span>Patient</span>
+            <p-autoComplete [(ngModel)]="selectedPatient" [suggestions]="responsePatient.content" (completeMethod)="getPatientsFiltered($event)" field="name" placeholder="patient name"></p-autoComplete>
+          </div>
         </div>
-        <div class="last-name-input">
-          <span>Patient CPF</span>
-          <input #inputPatientCPF type="text" placeholder="Write here">
+        <div class="status-date">
+          <div class="select-field">
+            <span>Status</span>
+            <select [(ngModel)]="selectedStatus" class="select-status">
+              <option value="">All</option>
+              <option value='WAIT_DATE'>Wait Date</option>
+              <option value='WAIT_CONFIRMATION'>Wait Confirmation</option>
+              <option value='FINISH'>Finish</option>
+              <option value='CANCELED'>Canceled</option>
+            </select>
+          </div>
+          <div class="select-field">
+            <span>Date Range</span>
+            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"></p-calendar>
+          </div>
         </div>
       </div>
-      <div class="email-and-cpf">
-        <div class="input-cpf">
-          <span>Psychologist Name</span>
-          <input #inputPsychologistName type="text" placeholder="Write here">
-        </div>
-        <div class="email-input">
-          <span>Psychologist CRP</span>
-          <input #inputPsychologistCRP type="email" placeholder="Write here">
-        </div>
-      </div>
-      <div class="filter-actions">
-        <div class="filter-clean">
-          <button class="btn-filter" (click)="filterList(inputPatientName, inputPatientCPF, inputPsychologistName, inputPsychologistCRP)"><i class="ph ph-funnel"></i>FILTER</button>
-          <button class="btn-clean" (click)="cleanInput(inputPatientName, inputPatientCPF, inputPsychologistName, inputPsychologistCRP)"><i class="ph ph-broom"></i>CLEAN</button>
+      <div class="filter-actions-container">
+        <div class="filter-actions">
+          <button class="btn-filter" (click)="filterList(0, 10)"><i class="ph ph-funnel"></i>FILTER</button>
+          <button class="btn-clean" (click)="getTherapiesData(0, 10)"><i class="ph ph-broom"></i>CLEAN</button>
         </div>
       </div>
     </div>
@@ -38,17 +47,8 @@
           <span><i class="ph ph-user-list"></i>THERAPIES</span>
         </div>
         <div class="header-actions">
-          <div>
-            <select [(ngModel)]="selectedStatus" (change)="getTherapiesByStatus()" class="select-status">
-              <option value="ALL">All</option>
-              <option value='WAIT_DATE'>Wait Date</option>
-              <option value='WAIT_CONFIRMATION'>Wait Confirmation</option>
-              <option value='FINISH'>Finish</option>
-              <option value='CANCELED'>Canceled</option>
-            </select>
-          </div>
           <div class="create-delete">
-            <button class="btn-create" (click)="showCreate()"><i class="ph ph-plus-circle"></i>CREATE </button>
+            <button class="btn-create" (click)="toggleCreate()"><i class="ph ph-plus-circle"></i>CREATE </button>
           </div>
         </div>
       </div>
@@ -65,15 +65,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of paginatedResponse?.content">
-              <td class="table-row" >{{ item.psychologist.name}}</td>
-              <td class="table-row" style="word-wrap: break-word;">{{ item.patient.name }}</td>
+            <tr *ngFor="let item of responseTherapy?.content">
+              <td class="table-row" >{{ item.psychologist.name | titlecase }}</td>
+              <td class="table-row" style="word-wrap: break-word;">{{ item.patient.name | titlecase }}</td>
               <td class="table-row" style="word-wrap: break-word;">{{ item.dateTime | date:'short' }}</td>
               <td class="table-row" style="word-wrap: break-word;">{{ item.status }}</td>
               <td class="td-actions">
                 <span>
-                  <i class="ph ph-eye"></i>
-                  <i class="ph ph-pencil-simple"></i>
+                  <i class="ph ph-eye" (click)="toggleDetails(); selectedTherapy = item"></i>
+                  <i class="ph ph-pencil-simple" (click)="toggleEdit(); selectedTherapy = item" *ngIf="item.status == 'WAIT_CONFIRMATION'"></i>
                   <i class="ph ph-minus-circle"></i>
                 </span>
               </td>
@@ -81,37 +81,47 @@
             </tbody>
           </table>
         </div>
+        <p-paginator *ngIf="responseTherapy"
+                     [first]="0"
+                     [rows]="responseTherapy.size"
+                     [totalRecords]="responseTherapy.totalElements"
+                     (onPageChange)="filtered ? filterList($event.page!, 10) : getTherapiesData($event.page!, 10)"
+        ></p-paginator>
       </div>
     </div>
   </div>
 </div>
 
-<div class="create-card" *ngIf="createVisible">
-  <div class="details-inner">
-    <div class="close-container">
+<div class="create-window" *ngIf="createVisible">
+  <div class="create-container">
+    <div class="create-container-header">
       <span>Create</span>
-      <i class="ph ph-x" (click)="closeCard()"></i>
+      <i class="ph ph-x" (click)="closeCard()" style="cursor: pointer"></i>
     </div>
-    <form class="create-input-container" [formGroup]="createForm" (ngSubmit)="createTherapy()">
-      <div class="edit-field">
+    <form class="create-form" [formGroup]="createForm" (ngSubmit)="createTherapy()">
+      <div class="field patient">
         <span class="detail-title">Patient</span>
-        <select formControlName="cpfPatient" class="default-select">
-          <option [ngValue]="null" disabled>Choose patient</option>
-          <option *ngFor="let pat of paginatedResponsePatient?.content" [value]="pat.cpf">{{ pat.name }}</option>
-        </select>
+        <p-autoComplete [suggestions]="responsePatient.content"
+                        (completeMethod)="getPatientsFiltered($event)"
+                        field="name"
+                        placeholder="patient name"
+                        formControlName="cpfPatient">
+        </p-autoComplete>
       </div>
 
-      <div class="edit-field">
+      <div class="field psychologist">
         <span class="detail-title">Psychologist</span>
-        <select formControlName="crpPsychologist" class="default-select">
-          <option [ngValue]="null" disabled>Choose psychologist</option>
-          <option *ngFor="let psy of paginatedResponsePsychologist?.content" [value]="psy.crp">{{ psy.name }}</option>
-        </select>
+        <p-autoComplete [suggestions]="responsePsychologist.content"
+                        (completeMethod)="getPsychologistFiltered($event)"
+                        field="name"
+                        placeholder="psychologist name"
+                        formControlName="crpPsychologist">
+        </p-autoComplete>
       </div>
 
-      <div class="edit-field">
+      <div class="field date">
         <span class="detail-title">Date</span>
-        <input type="datetime-local" formControlName="dateTime" step="900" min="" max="">
+        <p-calendar [showTime]="true" formControlName="dateTime" [disabledDays]="[0,6]" [minDate]="minDate" [stepMinute]="15" [defaultDate]="minDate"></p-calendar>
       </div>
       <div class="edit-actions">
         <button class="btn-edit" type="submit">CREATE</button>
@@ -119,3 +129,66 @@
     </form>
   </div>
 </div>
+
+<div *ngIf="detailsVisible" class="details-window">
+  <div class="details-container">
+    <div class="details-container-header">
+      <span>Details</span>
+      <i class="ph ph-x" (click)="closeCard()" style="cursor: pointer"></i>
+    </div>
+    <div class="details-content">
+      <div class="patient-psychologist-fields">
+        <div class="patient field">
+          <span class="detail-title">Patient</span>
+          <span> {{ selectedTherapy.patient.name }} <i class="ph ph-eye"></i></span>
+        </div>
+
+        <div class="psychologist field">
+          <span class="detail-title">Psychologist</span>
+          <span> {{ selectedTherapy.psychologist.name }} <i class="ph ph-eye"></i></span>
+        </div>
+      </div>
+
+      <div class="field date">
+        <span class="detail-title">Date</span>
+        <span> {{ selectedTherapy.dateTime | date:'short' }} </span>
+      </div>
+
+      <div class="field createAt">
+        <span class="detail-title">Create at.</span>
+        <span> {{ selectedTherapy.createAt | date:'short' }} </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="edit-window" *ngIf="editVisible">
+  <div class="edit-container">
+    <div class="edit-container-header">
+      <span>Edit</span>
+      <i class="ph ph-x" (click)="closeCard()" style="cursor: pointer"></i>
+    </div>
+    <form class="edit-form" [formGroup]="createForm" (ngSubmit)="editTherapy()">
+      <div class="field patient">
+        <span class="field-title">Patient</span>
+        <input type="text" disabled placeholder="{{selectedTherapy.patient.name}}">
+      </div>
+
+      <div class="field psychologist">
+        <span class="field-title">Psychologist</span>
+        <input type="text" disabled placeholder="{{selectedTherapy.psychologist.name}}">
+      </div>
+
+      <div class="field date">
+        <span class="detail-title">Date</span>
+        <p-calendar [showTime]="true" formControlName="dateTime" [disabledDays]="[0,6]" [minDate]="minDate" [stepMinute]="15" [defaultDate]="minDate"></p-calendar>
+      </div>
+      <div class="edit-actions">
+        <button class="btn-edit" type="submit">EDIT</button>
+      </div>
+    </form>
+  </div>
+</div>
+<p-calendar [showTime]="true" formControlName="dateTime" [disabledDays]="[0,6]" [minDate]="minDate" [stepMinute]="15" [defaultDate]="minDate"></p-calendar>
+
