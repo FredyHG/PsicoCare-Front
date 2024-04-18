@@ -5,8 +5,9 @@
   display: flex;
   flex-direction: row;
   height: 100vh;
-  align-items: center;
   justify-content: center;
+  align-items: flex-start;
+  padding-top: 5vh;
 
   .details-container{
     .container-title{
@@ -84,6 +85,7 @@
   align-items: center;
   .change-password-container{
     padding: 15px;
+    width: 25vw;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -113,6 +115,10 @@
       justify-content: flex-end;
       .btn-change{
         @include button-style;
+        &:disabled{
+          background-color: #676d81;
+          cursor: not-allowed;
+        }
       }
     }
 
@@ -122,5 +128,11 @@
       gap: 15px;
     }
   }
+}
+
+.error-label{
+  padding-top: 5px;
+  color: #ff3333;
+  font-size: 12px;
 }
 

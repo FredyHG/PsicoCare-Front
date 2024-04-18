@@ -10,9 +10,10 @@
   justify-content: center;
   align-items: center;
 
+
   .login-page-inner{
     padding: 15px;
-    width: 15vw;
+    width: 20vw;
     min-width: 150px;
     height: auto;
     gap: 15px;
@@ -21,6 +22,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-radius: 8px;
     .login-inputs {
 
       width: 100%;
@@ -41,16 +43,13 @@
           border: #3c4868 solid 2px;
         }
 
-        //.error{
-        //  color: #f10000;
-        //}
       }
 
       input {
         cursor: text;
         background-color: #e8e8e8;
         border: #3c4868 solid 1px;
-        height: 3vh;
+        height: 4vh;
         border-radius: 5px;
         padding-left: 5px;
         transition: border-color 0.3s ease;

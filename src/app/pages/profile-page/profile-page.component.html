@@ -27,9 +27,9 @@
       <div class="email field">
         <span class="field-title">Email</span>
         <span class="field-content">{{profile.email}}</span>
-        <div class="btn-change">
-          <span><i class="ph ph-pencil-simple" (click)="changeEmail()"></i></span>
-        </div>
+<!--        <div class="btn-change">-->
+<!--          <span><i class="ph ph-pencil-simple" (click)="changeEmail()"></i></span>-->
+<!--        </div>-->
       </div>
 
     </div>
@@ -53,21 +53,44 @@
     </div>
     <form class="change-password-form" [formGroup]="changePasswordForm" (submit)="changePassword()">
       <div class="old-password field">
-        <span class="field-title">Old password</span>
+        <span class="field-title">Old password *</span>
         <input type="password" formControlName="oldPassword">
       </div>
 
       <div class="new-password field">
-        <span class="field-title">New password</span>
-        <input type="password" formControlName="newPassword" #newPassword>
+        <span class="field-title"
+              [ngStyle]="{'color': changePasswordForm.get('newPassword')?.invalid
+              && changePasswordForm.get('newPassword')?.touched ? '#ff3333' : '#3c4868'}">New password *
+        </span>
+        <input type="password" formControlName="newPassword" #newPassword
+               [ngStyle]="{'border': changePasswordForm.get('newPassword')?.invalid
+                && changePasswordForm.get('newPassword')?.touched ? '#ff3333 solid 1px' : '#3c4868 solid 1.5px'}">
+
+        <label *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength')
+                          && !changePasswordForm.controls['newPassword'].hasError('required')" class="error-label">
+          Your password must be at least <strong>8</strong> characters long.
+        </label>
+
       </div>
 
-      <div class="new-password field" *ngIf="newPassword.value != ''">
-        <span class="field-title">Confirm Password</span>
-        <input type="password" #confirmPassword>
+      <div class="new-password field" *ngIf="newPassword.value != ''" >
+        <span class="field-title"
+              [ngStyle]="{'color': changePasswordForm.get('confirmPassword')?.invalid
+              && changePasswordForm.get('confirmPassword')?.touched ? '#ff3333' : '#3c4868'}">
+          Confirm Password
+        </span>
+
+        <input type="password" (blur)="confirmPasswordMatch()" formControlName="confirmPassword"
+               [ngStyle]="{'border': changePasswordForm.get('confirmPassword')?.invalid
+                && changePasswordForm.get('confirmPassword')?.touched ? '#ff3333 solid 1px' : '#3c4868 solid 1.5px'}">
+
+        <label *ngIf="changePasswordForm.controls['confirmPassword'].hasError('passwordMisMatch')
+                          && !changePasswordForm.controls['confirmPassword'].hasError('required')" class="error-label">
+          Password <strong>mismatch</strong>
+        </label>
       </div>
       <div class="change-actions">
-        <button class="btn-change" type="submit" [disabled]="!changePasswordForm.valid">Change</button>
+        <button class="btn-change" type="submit" [disabled]="changePasswordForm.invalid">Change</button>
       </div>
     </form>
   </div>

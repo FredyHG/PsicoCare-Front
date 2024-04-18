@@ -5,6 +5,8 @@ import {AuthService} from "../../services/auth.service";
 import {UserLogin} from "../../models/UserLogin";
 import {AuthResponse} from "../../models/dto/AuthResponse";
 import {Router} from "@angular/router";
+import {ToastModule} from "primeng/toast";
+import {MessageService} from "primeng/api";
 
 
 @Component({
@@ -14,7 +16,8 @@ import {Router} from "@angular/router";
     ReactiveFormsModule,
     NgClass,
     NgStyle,
-    NgIf
+    NgIf,
+    ToastModule
   ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
@@ -25,7 +28,8 @@ export class LoginPageComponent {
 
   constructor(private formBuilder: FormBuilder,
               private authService: AuthService,
-              private router: Router) {
+              private router: Router,
+              private messageService: MessageService) {
 
     if(authService.isLoggedIn$){
       this.router.navigate(['/patients']);
@@ -46,8 +50,13 @@ export class LoginPageComponent {
     this.authService.submitLoginForm(form).subscribe({
       next: (response: AuthResponse): void => {
         this.authService.login(response.refresh_token, response.access_token)
-      }, error: (err): void => {
-      }, complete: (): void => {
+      },
+      error: (err): void => {
+        this.showFailedLogin();
+        this.loginForm.reset();
+      },
+      complete: (): void => {
+        this.showSuccessLogin();
         this.router.navigate(['/patients']);
       }
     })
@@ -66,6 +75,14 @@ export class LoginPageComponent {
 
   reloadPage(): void {
     window.location.reload();
+  }
+
+  showSuccessLogin(): void {
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Login successfully' });
+  }
+
+  showFailedLogin(): void {
+    this.messageService.add({ severity: 'error', summary: 'Failed', detail: 'Incorrect username or password. Please try again.' });
   }
 
 }
