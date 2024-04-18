@@ -54,8 +54,8 @@
             </thead>
             <tbody>
             <tr *ngFor="let item of paginatedResponse?.content">
-              <td class="table-row">{{ item.name }}</td>
-              <td class="table-row">{{ item.lastName }}</td>
+              <td class="table-row">{{ item.name | titlecase }}</td>
+              <td class="table-row">{{ item.lastName | titlecase }}</td>
               <td class="table-row" style="word-wrap: break-word;">{{ item.email }}</td>
               <td class="td-cpf table-row">{{ item.cpf }}</td>
               <td class="td-actions">
@@ -152,7 +152,7 @@
 
       <div class="field birthdate">
         <span class="field-title">BirthDate</span>
-        <p-calendar formControlName="birthDate" [minDate]="minDate" [defaultDate]="minDate"></p-calendar>>
+        <p-calendar formControlName="birthDate" [minDate]="minDate"></p-calendar>
       </div>
       <div class="edit-actions">
         <button class="btn-edit" type="submit">EDIT</button>
@@ -204,6 +204,6 @@
   </div>
 </div>
 
-
+<p-toast></p-toast>
 <app-confirm-popup #popupRef (confirm)="handleConfirmation($event)" message="Are you sure?"></app-confirm-popup>
 

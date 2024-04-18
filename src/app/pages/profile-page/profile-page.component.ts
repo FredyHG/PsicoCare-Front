@@ -58,20 +58,15 @@ export class ProfilePageComponent {
   getPsychologistFromToken(){
     this.psychologistService.getPsychologistByToken().subscribe({
       next: (response: Psychologist): Psychologist => this.profile = response,
-    })
+    });
   }
 
   toggleChangeWindow() {
-    console.log("ent")
     this.changePasswordVisible = true;
   }
 
-  changeEmail(){
-    console.log('Changed successfully')
-  }
-
   changePassword(){
-    let changeForm: ChangePasswordRequest = this.changePasswordForm.value as ChangePasswordRequest
+    let changeForm: ChangePasswordRequest = this.changePasswordForm.value as ChangePasswordRequest;
 
     this.authService.changePassword(changeForm).subscribe({
       error: (err): void => {
@@ -83,7 +78,7 @@ export class ProfilePageComponent {
         this.closeCard();
         this.changePasswordForm.reset();
       }
-    })
+    });
   }
 
   closeCard() {

@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {DatePipe, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, NgOptimizedImage, TitleCasePipe} from "@angular/common";
 import {ConfirmPopupComponent} from "../../popups/confirm-popup/confirm-popup.component";
 import {PaginatedResponse} from "../../models/PaginatedResponse";
 import {Patient} from "../../models/Patient";
@@ -10,15 +10,10 @@ import {PatientPutRequest} from "../../models/dto/PatientPutRequest";
 import {ResponseMessage} from "../../models/dto/ResponseMessage";
 import {NgxMaskDirective} from "ngx-mask";
 import {PaginatorModule} from "primeng/paginator";
-import {response} from "express";
-import {first} from "rxjs";
 import {CalendarModule} from "primeng/calendar";
+import {ToastModule} from "primeng/toast";
+import {MessageService} from "primeng/api";
 
-const AUTH_API = 'http://localhost:8080/api/patient';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
 
 @Component({
   selector: 'patient-page',
@@ -32,7 +27,9 @@ const httpOptions = {
     ReactiveFormsModule,
     NgxMaskDirective,
     PaginatorModule,
-    CalendarModule
+    CalendarModule,
+    ToastModule,
+    TitleCasePipe
   ],
   templateUrl: './patient-page.component.html',
   styleUrl: './patient-page.component.scss'
@@ -63,6 +60,7 @@ export class PatientPageComponent {
 
   constructor(private httpClient: HttpClient,
               private patientService: PatientsService,
+              private messageService: MessageService,
               private formBuilder: FormBuilder) {
 
     this.patientService.getPatients(0, 10).subscribe({
@@ -86,7 +84,7 @@ export class PatientPageComponent {
 
     this.patientService.getPatients(pageNumber, pageSize).subscribe({
       next: (response: PaginatedResponse<Patient>): PaginatedResponse<Patient> => this.paginatedResponse = response
-    })
+    });
   }
 
   showPopup(): void {
@@ -104,7 +102,7 @@ export class PatientPageComponent {
 
   showEdit(patient: Patient): void{
     this.selectedPatient = patient;
-
+    this.editForm.get('birthDate')?.setValue(patient.birthDate);
     this.editVisible = true;
   }
 
@@ -121,7 +119,17 @@ export class PatientPageComponent {
   handleConfirmation(confirmed: boolean) {
     if (confirmed) {
       this.patientService.deletePatient(this.selectedPatient.cpf).subscribe({
-        complete: () => this.getPatientsData(1, 10)
+        error: (err): void => {
+          if(err.status == 409){
+            this.showFailed("You cannot delete a patient who is linked to a therapy.");
+          } else {
+            this.showFailed("Failed to delete this patient");
+          }
+        },
+        complete: (): void => {
+          this.showSuccess("Patient deleted successfully.");
+          this.getPatientsData(1, 10);
+        }
       });
     }
   }
@@ -157,9 +165,9 @@ export class PatientPageComponent {
 
 
   editPatient(){
-    this.editForm.get('cpf')?.setValue(this.selectedPatient.cpf)
+    this.editForm.get('cpf')?.setValue(this.selectedPatient.cpf);
 
-    let editForm: PatientPutRequest = this.editForm.value as PatientPutRequest
+    let editForm: PatientPutRequest = this.editForm.value as PatientPutRequest;
 
     this.patientService.editPatient(editForm).subscribe({
       next: (response: ResponseMessage): void => {
@@ -168,14 +176,19 @@ export class PatientPageComponent {
           this.closeCard();
         }
       },
+      error: (err): void => {
+        this.showFailed("Failed to edit this patient.");
+        this.editForm.reset();
+      },
       complete: (): void => {
+        this.showSuccess("Patient edited successfully.");
         this.editForm.reset();
       }
-    })
+    });
   }
 
   createPatient() {
-    let createForm: PatientPutRequest = this.editForm.value as PatientPutRequest
+    let createForm: PatientPutRequest = this.editForm.value as PatientPutRequest;
 
     this.patientService.createPatient(createForm).subscribe({
       next: (response: ResponseMessage): void => {
@@ -184,18 +197,21 @@ export class PatientPageComponent {
           this.closeCard();
         }
       },
+      error: (err): void => {
+        this.showFailed("Failed to create a patient.");
+        this.editForm.reset();
+      },
       complete: (): void => {
+        this.showSuccess("Patient created successfully.");
         this.editForm.reset();
       }
-    })
+    });
   }
 
   getCurrentDateTime() {
     let date = new Date();
-    date.toISOString()
+    date.toISOString();
   }
-
-
 
   setPageDefaultDate(): void{
     this.getCurrentDateTime();
@@ -205,6 +221,14 @@ export class PatientPageComponent {
 
     this.editForm.get('birthDate')?.setValue(this.minDate);
 
+  }
+
+  showSuccess(msg: string): void{
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: msg });
+  }
+
+  showFailed(msg: string): void{
+    this.messageService.add({ severity: 'error', summary: 'Failed', detail: msg });
   }
 
 }

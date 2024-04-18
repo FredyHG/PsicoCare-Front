@@ -120,6 +120,13 @@
   }
 }
 
+.logout-area{
+  .logout-text{
+    color: #39425d;
+    padding-left: 5px;
+  }
+}
+
 @media only screen and (min-width: 601px) {
   .button-text,
   .logo span, .logout-area .tab-button span{

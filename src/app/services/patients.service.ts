@@ -63,12 +63,12 @@ export class PatientsService {
     return this.httpClient.get<PaginatedResponse<Patient>>(this.apiUrl + '/patient/filter', { params });
   }
 
-  deletePatient(cpf: string){
+  deletePatient(cpf: string): Observable<ResponseMessage>{
 
     let params = new HttpParams();
     params = params.set('cpf', cpf)
 
-    return this.httpClient.delete<void>(this.apiUrl + '/patient/delete', { params });
+    return this.httpClient.delete<ResponseMessage>(this.apiUrl + '/patient/delete', { params });
   }
 
   editPatient(editForm: PatientPutRequest): Observable<ResponseMessage> {

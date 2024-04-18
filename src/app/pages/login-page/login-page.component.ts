@@ -49,7 +49,7 @@ export class LoginPageComponent {
 
     this.authService.submitLoginForm(form).subscribe({
       next: (response: AuthResponse): void => {
-        this.authService.login(response.refresh_token, response.access_token)
+        this.authService.login(response.refresh_token, response.access_token);
       },
       error: (err): void => {
         this.showFailedLogin();
@@ -62,16 +62,6 @@ export class LoginPageComponent {
     })
   }
 
-  checkForm() {
-
-  }
-
-  checkField(field: string) {
-    if(this.loginForm.controls[field].value === null) return false;
-
-    return this.loginForm.controls[field].invalid || this.loginForm.controls[field].touched;
-
-  }
 
   reloadPage(): void {
     window.location.reload();

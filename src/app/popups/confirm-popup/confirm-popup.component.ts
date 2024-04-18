@@ -19,7 +19,7 @@ export class ConfirmPopupComponent {
 
 
   show() {
-    this.isVisible = true;
+    this.isVisible = !this.isVisible;
   }
 
   hide() {
