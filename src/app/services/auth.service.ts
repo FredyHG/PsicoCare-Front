@@ -24,6 +24,7 @@ export class AuthService {
   isUserLoggedIn: boolean = false;
   private authSubscription: Subscription;
   private apiUrlAuth = environment.apiUrlAuth;
+  private apiUrl = environment.apiUrl;
 
   constructor(private cookieService: CookieService,
               private httpClient: HttpClient,
@@ -94,5 +95,9 @@ export class AuthService {
 
   changePassword(formData: ChangePasswordRequest): Observable<ResponseMessage>{
     return this.httpClient.post<ResponseMessage>(this.apiUrlAuth + '/change-password', formData, httpOptions)
+  }
+
+  checkStatus(): Observable<ResponseMessage> {
+    return this.httpClient.get<ResponseMessage>(this.apiUrl + '/status', httpOptions)
   }
 }

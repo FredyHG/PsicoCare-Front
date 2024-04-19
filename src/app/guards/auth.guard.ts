@@ -1,7 +1,7 @@
-import {inject, Injectable} from "@angular/core";
+import {inject} from "@angular/core";
 import {AuthService} from "../services/auth.service";
-import {catchError, map, Observable, of} from "rxjs";
-import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot} from "@angular/router";
+import {catchError, map, of} from "rxjs";
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from "@angular/router";
 
 export namespace AuthGuard {
   export const canActivate = (
@@ -21,8 +21,4 @@ export namespace AuthGuard {
     );
   }
 
-  export const canActivateChild = (
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ) => canActivate(route, state);
 }

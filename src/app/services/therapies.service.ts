@@ -7,6 +7,7 @@ import {environment} from "../../../environment";
 import {Patient} from "../models/Patient";
 import {ResponseMessage} from "../models/dto/ResponseMessage";
 import {TherapyPostRequest} from "../models/dto/TherapyPostRequest";
+import {TherapyPutRequest} from "../models/dto/TherapyPutReques";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -60,7 +61,10 @@ export class TherapiesService {
   }
 
   createTherapy(createForm: TherapyPostRequest): Observable<ResponseMessage>{
-    return this.httpClient.post<ResponseMessage>(this.apiUrl + '/therapy/schedule', createForm, httpOptions)
+    return this.httpClient.post<ResponseMessage>(this.apiUrl + '/therapy/schedule', createForm, httpOptions);
   }
 
+  editTherapy(editForm: TherapyPutRequest): Observable<ResponseMessage>{
+    return this.httpClient.post<ResponseMessage>(this.apiUrl + '/therapy/reschedule', editForm, httpOptions);
+  }
 }

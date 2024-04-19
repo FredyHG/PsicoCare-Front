@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-maintenance-page',
@@ -7,6 +7,5 @@ import { Component } from '@angular/core';
   templateUrl: './maintenance-page.component.html',
   styleUrl: './maintenance-page.component.scss'
 })
-export class MaintenancePageComponent {
-
+export class MaintenancePageComponent{
 }
