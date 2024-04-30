@@ -1,4 +1,4 @@
 export const environment = {
-  apiUrl: 'http://localhost:8080/api',
-  apiUrlAuth: 'http://localhost:8080/api/auth',
+  apiUrl: 'http://18.231.160.198/api',
+  apiUrlAuth: 'http://18.231.160.198/api/auth',
 };
